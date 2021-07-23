@@ -17,7 +17,9 @@ std::string  g_strLidarID = "";
 
 void sdkCallBackFunErrorCode(int iErrorCode)
 {
-    //std::cout << "Main: sdkCallBackFunErrorCode ErrorCode=" << iErrorCode << std::endl;
+	char buff[128] = { 0 };
+	sprintf(buff, "Error code=%d\n",iErrorCode);
+	printf(buff);
 }
 
 void sdkCallBackFunSecondInfo(tsSDKStatistic sInfo)
@@ -70,10 +72,15 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 		outFile.write(buff, strlen(buff));
 
 		printf(buff);
+
+		
     }
 		
 	outFile.close();
 
+	sprintf(buff, "---------------------------------------  %d\n",lstG.size());
+
+	printf(buff);
 }
 
 void sdkCallBackFunDistQ2(LstNodeDistQ2 lstG)
@@ -117,15 +124,15 @@ int main()
     //HCLidar& device= HCLidar::getInstance();
     int rtn = 0;
 
-    bool bPollMode = false;
+    bool bPollMode = true;
     bool bDistQ2 = false;
     bool bLoop = false;
 
 	std::string strVer = getSDKVersion();
     std::cout << "Main: SDK verion=" << strVer.c_str()<< std::endl;
 
-    //auto funErrorCode = std::bind(sdkCallBackFunErrorCode, std::placeholders::_1);
-    //device.setCallBackFunErrorCode(funErrorCode);
+    auto funErrorCode = std::bind(sdkCallBackFunErrorCode, std::placeholders::_1);
+	setSDKCallBackFunErrorCode(funErrorCode);
 
     auto funSecondInfo = std::bind(sdkCallBackFunSecondInfo, std::placeholders::_1);
     setSDKCallBackFunSecondInfo(funSecondInfo);
@@ -157,6 +164,7 @@ int main()
 	int iReadTimeoutms = 10;//
 
 	//setSDKFactoryMode();
+	setCircleDataMode();
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
 
     if (rtn != 1)
@@ -169,16 +177,19 @@ int main()
         
     }
 
-	/*if (!device.getLidarInfo())
+	setLidarPowerOn(true);
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+	if (!getSDKLidarInfo())
 	{
-		device.unInit();
-		printf("LidarTest: Get lidar info failed!\n");
+		hcSDKUnInit();
+		printf("Main: No lidar ID, please try again!\n");
 		getchar();
 		exit(0);
 		return 0;
-		
-	}*/
-
+	}
+	g_strLidarID = getSDKLidarID();
+	
 	
 	printf( "Lidar ID=%s\n" , getSDKLidarID());
 	printf( "Factory Info:%s\n" , getSDKFactoryInfo());
@@ -186,7 +197,7 @@ int main()
 	printf( "Main: Hardware ver:%s\n", getSDKHardwareVersion());
 	printf( "Main: Lidar model:%s\n" , getSDKLidarModel() );
 
-	g_strLidarID = getSDKLidarID();
+	
 
 	int iCount = 0;
 	LidarTest  *lidarTest = nullptr;
@@ -210,12 +221,16 @@ int main()
                 LstPointCloud lstG;
 				if (getSDKRxPointClouds(lstG))
 				{
-					//printf("Main: Poll Rx Points=%d\n",lstG.size());
-					for (auto sInfo : lstG)
+					if (lstG.size() > 0)
 					{
-						//if(sInfo.dAngle>359 || sInfo.dAngle < 1)
-							//printf("Main: Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.u16Dist);//printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
+						printf("Main: ------------------------------Poll Rx Points=%d\n", lstG.size());
+						for (auto sInfo : lstG)
+						{
+							//if(sInfo.dAngle>359 || sInfo.dAngle < 1)
+								//printf("Main: Angle=%0.4f,Raw_Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.dAngleRaw,sInfo.u16Dist);//printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
+						}
 					}
+					
 				}
 				else
 				{
@@ -248,18 +263,17 @@ int main()
         int iSDKStatus = getSDKStatus();
 		//printf("Main: SDK Status=%d\n" ,iSDKStatus );
 
-		iCount++;
+		/*iCount++;
 		if (iCount > 300)
 		{
 			iCount = 0;
 			g_strLidarID = getSDKLidarID();
 			printf("Lidar ID=%s\n", g_strLidarID.c_str());
-		}
+		}*/
 		
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         std::this_thread::yield();
-        //printf("main....\n");
     }
 
 	if (lidarTest) 

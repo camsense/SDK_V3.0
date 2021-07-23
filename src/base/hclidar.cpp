@@ -111,6 +111,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
         m_iCircleNumberMAX=415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
     }
     else if(m_strLidarModel == X1D)
     {
@@ -121,6 +123,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
         m_iCircleNumberMAX=415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
     }
     else if(m_strLidarModel == X1E)
     {
@@ -131,6 +135,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
         m_iCircleNumberMAX=415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
     }
     else if(m_strLidarModel == X1F)
     {
@@ -141,6 +147,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
         m_iCircleNumberMAX=415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
     }
 	else if (m_strLidarModel == X1G)
 	{
@@ -151,6 +159,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iSpeedMax = SPEED_312_MAX;
 		m_iSpeedMin = SPEED_312_MIN;
 		m_iCircleNumberMAX = 415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
 	}
 	else if (m_strLidarModel == X1K)
 	{
@@ -161,6 +171,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iSpeedMax = SPEED_312_MAX;
 		m_iSpeedMin = SPEED_312_MIN;
 		m_iCircleNumberMAX = 415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
 	}
 	else if (m_strLidarModel == X1L)
 	{
@@ -171,6 +183,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iSpeedMax = SPEED_312_MAX;
 		m_iSpeedMin = SPEED_312_MIN;
 		m_iCircleNumberMAX = 415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
 	}
     else if(m_strLidarModel == X1M)
     {
@@ -181,6 +195,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
         m_iCircleNumberMAX=415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
     }
 	else if (m_strLidarModel == X1N)
 	{
@@ -191,6 +207,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iSpeedMax = SPEED_312_MAX;
 		m_iSpeedMin = SPEED_312_MIN;
 		m_iCircleNumberMAX = 415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
 	}
 	else if (m_strLidarModel == X1S)
 	{
@@ -201,6 +219,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iSpeedMax = SPEED_300_MAX;
 		m_iSpeedMin = SPEED_300_MIN;
 		m_iCircleNumberMAX = 415;
+		m_dAngleStep = ANGLE_RESOLV_1800;
+		m_dCirclePoints = CICRLE_MAX_1800;
 	}
     else if(m_strLidarModel == X2A)
     {
@@ -211,6 +231,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_360_MAX;
         m_iSpeedMin = SPEED_360_MIN;
         m_iCircleNumberMAX=515;
+		m_dAngleStep = ANGLE_RESOLV_3000;
+		m_dCirclePoints = CICRLE_MAX_3000;
     }
     else if(m_strLidarModel == X2B)
     {
@@ -221,6 +243,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
         m_iCircleNumberMAX=415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_2000;
     }
     else if(m_strLidarModel == X2C)
     {
@@ -231,6 +255,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_360_MAX;
         m_iSpeedMin = SPEED_360_MIN;
         m_iCircleNumberMAX=515;
+		m_dAngleStep = ANGLE_RESOLV_3000;
+		m_dCirclePoints = CICRLE_MAX_3000;
     }
     else if(m_strLidarModel == X2E)
     {
@@ -241,16 +267,20 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_360_MAX;
         m_iSpeedMin = SPEED_360_MIN;
         m_iCircleNumberMAX=515;
+		m_dAngleStep = ANGLE_RESOLV_3000;
+		m_dCirclePoints = CICRLE_MAX_3000;
     }
     else if(m_strLidarModel == X2F)
     {
         m_dAngleOffsetD = 28.5;
         m_dBaseline_mm = 17.92;
-        m_iFPSMax = FPS_2000_MAX;
-        m_iFPSMin = FPS_2000_MIN;
-        m_iSpeedMax = SPEED_312_MAX;
-        m_iSpeedMin = SPEED_312_MIN;
+        m_iFPSMax = FPS_3000_MAX;
+        m_iFPSMin = FPS_3000_MIN;
+        m_iSpeedMax = SPEED_360_MAX;
+        m_iSpeedMin = SPEED_360_MIN;
         m_iCircleNumberMAX=415;
+		m_dAngleStep = ANGLE_RESOLV_3000;
+		m_dCirclePoints = CICRLE_MAX_3000;
     }
     else if(m_strLidarModel == X2M)
     {
@@ -262,6 +292,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
         m_iCircleNumberMAX=515;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_3000;
     }
     else if(m_strLidarModel == X2N)
     {
@@ -273,6 +305,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
         m_iCircleNumberMAX=415;
+		m_dAngleStep = ANGLE_RESOLV_2000;
+		m_dCirclePoints = CICRLE_MAX_3000;
     }
 	else if (m_strLidarModel == T1A)
 	{
@@ -284,6 +318,8 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iSpeedMax = SPEED_TOF_MAX;
 		m_iSpeedMin = SPEED_TOF_MIN;
 		m_iCircleNumberMAX = 415;
+		m_dAngleStep = ANGLE_RESOLV_3000;
+		m_dCirclePoints = CICRLE_MAX_3000;
 	}
     else
     {
@@ -457,6 +493,9 @@ void HCLidar::setReadCharsError(int errCode)
     {
         m_funErrorCode(m_iLastErrorCode);
     }
+
+	std::lock_guard<std::mutex> lock(m_mtxError);
+	m_mapErrorCode[m_iLastErrorCode] = HCHead::getCurrentTimestampUs();
 }
 
 void HCLidar::threadWork()
@@ -620,10 +659,17 @@ void HCLidar::threadParse()
         }
         else
         {
+			if (m_sStatistic.u64TSRxPacketFirst == 0)
+			{
+				m_sStatistic.u64TSRxPacketFirst = HCHead::getCurrentTimestampUs();
+				m_u64StartMS = m_sStatistic.u64TSRxPacketFirst;
+			}
             processMain();
 
-            checkReadPacketData();
+            
         }
+
+		checkReadPacketData();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
         std::this_thread::yield();
@@ -634,8 +680,8 @@ void HCLidar::threadParse()
 void HCLidar::checkReadPacketData()
 {
 
-    if(m_sStatistic.u64TSRxPacketFirst == 0)
-        return;
+   // if(m_sStatistic.u64TSRxPacketFirst == 0)
+        //return;
 
 
     if(bIntervalOneSecond(m_u64StartMS))
@@ -660,6 +706,8 @@ void HCLidar::checkReadPacketData()
         }
         m_sStatistic.reset();
 
+		m_u64CountS++;
+		checkLDSVoltage();
     }
 }
 
@@ -799,8 +847,14 @@ bool HCLidar::processData()
     {
         //printf("HCSDK Error: rx data not mes header\n" );
         m_lstBuff.clear();
+		
+		checkFindPackHeader();
         return false;
     }
+	else
+	{
+		m_u64StartTimeFindPackHeader = 0;
+	}
 
     if(iIndex>0)
     {
@@ -826,6 +880,32 @@ bool HCLidar::processData()
 
     return false;
 
+}
+
+void HCLidar::checkFindPackHeader()
+{
+	if (m_bInitTimeout)
+	{
+		if (m_u64StartTimeFindPackHeader > 0)
+		{
+			UINT64 u64Temp = HCHead::getCurrentTimestampUs();
+			UINT64 u64Int = u64Temp - m_u64StartTimeFindPackHeader;
+
+			if (u64Int >= 100000) //100ms
+			{
+				m_u64StartTimeFindPackHeader = 0;
+				setReadCharsError(ERR_FIND_HEAD_TIMEOUT);
+			}
+		}
+		else
+		{
+			m_u64StartTimeFindPackHeader = HCHead::getCurrentTimestampUs();
+		}
+	}
+	else
+	{
+		m_u64StartTimeFindPackHeader = 0;
+	}
 }
 
 bool HCLidar::calIDX2(char* ch,int iLen)
@@ -1239,13 +1319,13 @@ bool HCLidar::getPointCloudTof(std::vector<UCHAR>& lstBuff)
 
     if(iPackLen <= lstBuff.size())//have a good packet
     {
-        if(m_sStatistic.u64TSRxPacketFirst==0)
+        /*if(m_sStatistic.u64TSRxPacketFirst==0)
         {
 
             m_sStatistic.u64TSRxPacketFirst = HCHead::getCurrentTimestampUs();
             m_u64StartMS = m_sStatistic.u64TSRxPacketFirst;
 
-        }
+        }*/
         if(checkDataCalTof(lstBuff, iPackLen))//good packet
         {
 			m_sStatistic.iErrorCountContinue=0;
@@ -1257,66 +1337,13 @@ bool HCLidar::getPointCloudTof(std::vector<UCHAR>& lstBuff)
             {
                 std::lock_guard<std::mutex> lock(m_mtxData);
 				parserRangeTof(m_resultRange,(char *)lstBuff.data(), iPackLen, sPointCloudHead.u8Num,iPointBytes);
-                if(m_bDistQ2)
-                {
-                    if(m_resultRange.size()>0)
-                    {
-                        convertDistQ2(m_resultRange);
-                        LstPointCloud tmp;
-                        tmp.swap(m_resultRange);
-                    }
-                }
-                else
-                {
-                    if(m_resultRange.size()>m_sSDKPara.iPollBuffSize)
-                    {
-                        HCHead::eraseRangeData(m_resultRange,m_resultRange.size()-m_sSDKPara.iPollBuffSize);
-                        setReadCharsError(ERR_BUFF_FULL);
-                    }
-                }
+				pollModePointCloud();
 
             }
             else//call back mode
             {
 				parserRangeTof(m_resultRange,(char *)lstBuff.data(), iPackLen, sPointCloudHead.u8Num,iPointBytes);
-                if(m_bDistQ2)
-                {
-
-                    if(m_resultRange.size()>0)
-                    {
-                        convertDistQ2(m_resultRange);
-                        LstPointCloud tmp;
-                        tmp.swap(m_resultRange);
-                    }
-                    if(m_sNodeList.size()>=m_sSDKPara.iCallbackBuffSize)
-                    {
-
-                        if(m_funDistQ2)
-                        {
-                            callbackDistQ2();
-                        }
-                        else
-                        {
-                            setReadCharsError(ERR_CALLBACK_FUN);
-                        }
-                    }
-                }
-                else
-                {
-                    if(m_resultRange.size()>=m_sSDKPara.iCallbackBuffSize)
-                    {
-                        if(m_funPointCloud)
-                        {
-                            m_funPointCloud(m_resultRange);
-                        }
-                        else
-                        {
-                            setReadCharsError(ERR_CALLBACK_FUN);
-                        }
-                        LstPointCloud tmp;
-                        tmp.swap(m_resultRange);
-                    }
-                }
+				callBackFunPointCloud();
             }
 
 			//LOG_INFO("lidar point cal ok! Point cloud buff size=%d\n" ,m_resultRange.size() );
@@ -1382,13 +1409,13 @@ bool HCLidar::getPointCloud(std::vector<UCHAR>& lstBuff)
 
 	if (iPackLen <= lstBuff.size())//have a good packet
 	{
-		if (m_sStatistic.u64TSRxPacketFirst == 0)
+		/*if (m_sStatistic.u64TSRxPacketFirst == 0)
 		{
 
 			m_sStatistic.u64TSRxPacketFirst = HCHead::getCurrentTimestampUs();
 			m_u64StartMS = m_sStatistic.u64TSRxPacketFirst;
 
-		}
+		}*/
 		if (checkDataCal(lstBuff, iPackLen))//good packet
 		{
 
@@ -1401,66 +1428,13 @@ bool HCLidar::getPointCloud(std::vector<UCHAR>& lstBuff)
 			{
 				std::lock_guard<std::mutex> lock(m_mtxData);
 				parserRangeEX(m_resultRange, (char *)lstBuff.data(), iPackLen, sPointCloudHead.u8Num, iPointBytes);
-				if (m_bDistQ2)
-				{
-					if (m_resultRange.size() > 0)
-					{
-						convertDistQ2(m_resultRange);
-						LstPointCloud tmp;
-						tmp.swap(m_resultRange);
-					}
-				}
-				else
-				{
-					if (m_resultRange.size() > m_sSDKPara.iPollBuffSize)
-					{
-						HCHead::eraseRangeData(m_resultRange, m_resultRange.size() - m_sSDKPara.iPollBuffSize);
-						setReadCharsError(ERR_BUFF_FULL);
-					}
-				}
-
+				pollModePointCloud();
 			}
 			else//call back mode
 			{
 				parserRangeEX(m_resultRange, (char *)lstBuff.data(), iPackLen, sPointCloudHead.u8Num, iPointBytes);
-				if (m_bDistQ2)
-				{
-
-					if (m_resultRange.size() > 0)
-					{
-						convertDistQ2(m_resultRange);
-						LstPointCloud tmp;
-						tmp.swap(m_resultRange);
-					}
-					if (m_sNodeList.size() >= m_sSDKPara.iCallbackBuffSize)
-					{
-
-						if (m_funDistQ2)
-						{
-							callbackDistQ2();
-						}
-						else
-						{
-							setReadCharsError(ERR_CALLBACK_FUN);
-						}
-					}
-				}
-				else
-				{
-					if (m_resultRange.size() >= m_sSDKPara.iCallbackBuffSize)
-					{
-						if (m_funPointCloud)
-						{
-							m_funPointCloud(m_resultRange);
-						}
-						else
-						{
-							setReadCharsError(ERR_CALLBACK_FUN);
-						}
-						LstPointCloud tmp;
-						tmp.swap(m_resultRange);
-					}
-				}
+				callBackFunPointCloud();
+				
 			}
 
 			//LOG_INFO("lidar point cal ok! Point cloud buff size=%d\n" ,m_resultRange.size() );
@@ -1598,6 +1572,7 @@ bool HCLidar::parserRangeTof(LstPointCloud &resultRange,const char * chBuff, int
 
     checkInvalidLowSpeed(speed);
     checkInvalidHighSpeed(speed);
+	checkEncoderError(speed);
 
     return true;
 }
@@ -1683,6 +1658,7 @@ bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int
 
 	checkInvalidLowSpeed(speed);
 	checkInvalidHighSpeed(speed);
+	checkEncoderError(speed);
 
 	return true;
 }
@@ -1843,10 +1819,24 @@ bool HCLidar::getRxPointClouds(LstPointCloud& lstG)
 		tmp.swap(lstG);
 	}
 	std::lock_guard<std::mutex> lock(m_mtxData);
-	if (m_resultRange.size() > 0)
+	if (m_bCircle)
 	{
-		lstG.swap(m_resultRange);
+		if (m_Circles.size() > 0)
+		{
+			LstPointCloud tmp = *m_Circles.begin();
+			lstG.swap(tmp);
+			m_Circles.erase(m_Circles.begin());
+		}
+		
 	}
+	else
+	{
+		if (m_resultRange.size() > 0)
+		{
+			lstG.swap(m_resultRange);
+		}
+	}
+	
 	return true;
 
 #endif
@@ -1871,6 +1861,12 @@ void HCLidar::checkInvalidFPS(int iFPS)
     {
         m_iInvalidFPSSecond = 0;
     }
+
+	if (m_u64CountS>= SENSOR_ERROR_SECOND && (iFPS == 0 || m_iLastErrorCode == ERR_LIDAR_FPS_INVALID))
+	{
+		if (!getErrorCode(ERR_MOTOR_BLOCKED, SENSOR_ERROR_TIME_MS))
+			setReadCharsError(ERR_LIDAR_SENSOR);
+	}
 }
 
 
@@ -1922,7 +1918,55 @@ void HCLidar::checkInvalidHighSpeed(UINT16 u16Speed)
     }
 }
 
+void HCLidar::checkEncoderError(UINT16 u16Speed)
+{
+	if (u16Speed == 0 || u16Speed == 1023)
+	{
+		LOG_INFO("Speed error=%d\n", u16Speed);
+		if (m_u64StartTimeSpeed != 0)
+		{
+			UINT64 endTime = HCHead::getCurrentTimestampUs();
+			if ((u16Speed != m_u16Speed) && (endTime - m_u64StartTimeSpeed) <= ENCODER_ERROR_TIME_MS*1000)
+			{
+				if (m_sStatistic.u64CurrentS > ENCODER_ERROR_SECOND)
+				{
+					if(!getErrorCode(ERR_MOTOR_BLOCKED, ENCODER_ERROR_TIME_MS))
+						setReadCharsError(ERR_LIDAR_ENCODER);
+				}
+					
+				m_u64StartTimeSpeed = 0;
+			}
+		}
+		else
+		{
+			m_u64StartTimeSpeed = HCHead::getCurrentTimestampUs();
+		}
 
+		
+	}
+	else
+	{
+		m_u64StartTimeSpeed = 0;
+	}
+	m_u16Speed = u16Speed;
+}
+
+void HCLidar::checkLDSVoltage()
+{
+	if (m_u64CountS >= LDS_VOLTAGE_ERROR_SECOND && m_sStatistic.u64FPS == 0 && !m_bHadID && m_bDisconnect)
+	{
+		setReadCharsError(ERR_LIDAR_VOLTAGE);
+	}
+}
+
+void HCLidar::checkPDCurrent()
+{
+	if(!getErrorCode(ERR_LIDAR_FPS_INVALID, PD_ERROR_TIME_MS) && (!getErrorCode(ERR_LIDAR_SPEED_LOW, PD_ERROR_TIME_MS) || !getErrorCode(ERR_LIDAR_SPEED_HIGH, PD_ERROR_TIME_MS)))
+	{
+		setReadCharsError(ERR_LIDAR_PD_CURRENT);
+	}
+		
+}
 
 void HCLidar::checkSharkBlocked()
 {
@@ -2291,6 +2335,8 @@ void HCLidar::checkInvalidLidarNumber(int validNumber)
         {
             setReadCharsError(ERR_LIDAR_NUMBER_INVALID);
             m_iInvalidNumberContinue = 0;
+
+			checkPDCurrent();
         }
     }
     else
@@ -2353,6 +2399,178 @@ void HCLidar::callbackDistQ2()
 }
 
 
+void HCLidar::pollModePointCloud()
+{
+	
+	if (m_bDistQ2)
+	{
+		if (m_resultRange.size() > 0)
+		{
+			convertDistQ2(m_resultRange);
+			LstPointCloud tmp;
+			tmp.swap(m_resultRange);
+		}
+	}
+	else
+	{
+		if (m_bCircle)
+		{
+			if (getOneCircleData())
+			{
+				m_Circles.push_back(m_lstCircle);
+				LstPointCloud tmp;
+				tmp.swap(m_lstCircle);
+			}
+			if (m_Circles.size() > m_sSDKPara.iCirclesBuffSize)
+			{
+				m_Circles.erase(m_Circles.begin());
+				setReadCharsError(ERR_BUFF_FULL);
+			}
+		}
+		else
+		{
+			if (m_resultRange.size() > m_sSDKPara.iPollBuffSize)
+			{
+				HCHead::eraseRangeData(m_resultRange, m_resultRange.size() - m_sSDKPara.iPollBuffSize);
+				setReadCharsError(ERR_BUFF_FULL);
+			}
+		}
+	}
+}
+void HCLidar::callBackFunPointCloud()
+{
+	if (m_bDistQ2)
+	{
+		if (m_resultRange.size() > 0)
+		{
+			convertDistQ2(m_resultRange);
+			LstPointCloud tmp;
+			tmp.swap(m_resultRange);
+		}
+		if (m_sNodeList.size() >= m_sSDKPara.iCallbackBuffSize)
+		{
+
+			if (m_funDistQ2)
+			{
+				callbackDistQ2();
+			}
+			else
+			{
+				setReadCharsError(ERR_CALLBACK_FUN);
+			}
+		}
+	}
+	else
+	{
+		if (m_bCircle)
+		{
+			if (getOneCircleData())
+			{
+				if (m_funPointCloud)
+				{
+					m_funPointCloud(m_lstCircle);
+				}
+				else
+				{
+					setReadCharsError(ERR_CALLBACK_FUN);
+				}
+				LstPointCloud tmp;
+				tmp.swap(m_lstCircle);
+			}
+		}
+		else
+		{
+			if (m_resultRange.size() >= m_sSDKPara.iCallbackBuffSize)
+			{
+				if (m_funPointCloud)
+				{
+					m_funPointCloud(m_resultRange);
+				}
+				else
+				{
+					setReadCharsError(ERR_CALLBACK_FUN);
+				}
+				LstPointCloud tmp;
+				tmp.swap(m_resultRange);
+			}
+		}
+	}
+
+	
+}
+
+bool HCLidar::getOneCircleData()
+{
+	bool bHadOne = false;
+	int iCount = 0;
+	for (auto sInfo : m_resultRange)
+	{
+		m_dAngleCur = sInfo.dAngleRaw;
+		if(sInfo.bValid)
+			++m_iValidNumber;
+
+		if (m_lstCircle.size()>0)
+		{
+			auto sTemp = *m_lstCircle.begin();
+			double dTemp = sTemp.dAngleRaw - m_dAngleCur;
+			if ((dTemp <= m_dAngleStep && dTemp>0) || (m_lstCircle.size()>= m_dCirclePoints))
+			{
+				bHadOne = true;
+				iCount++;
+				m_lstCircle.push_back(sInfo);
+				m_resultRange.erase(m_resultRange.begin(), m_resultRange.begin() + iCount);
+				checkInvalidLidarNumber(m_iValidNumber);
+				m_iValidNumber = 0;
+				break;
+			}
+
+	
+			
+		}
+
+		iCount++;
+
+		m_lstCircle.push_back(sInfo);
+		
+		m_dAnglePre = m_dAngleCur;	
+	}
+
+	if (bHadOne)
+	{
+		std::stable_sort(m_lstCircle.begin(), m_lstCircle.end(), newComparator);		
+	}
+	else
+	{
+		LstPointCloud tmp;
+		tmp.swap(m_resultRange);
+	}
+	
+	return bHadOne;
+}
+
+
+bool HCLidar::getErrorCode(int iError, int iMs)
+{
+	std::lock_guard<std::mutex> lock(m_mtxError);
+	std::map<int, UINT64>::iterator it = m_mapErrorCode.find(iError);
+	if (it != m_mapErrorCode.end())
+	{
+		UINT64 u64TS = it->second;
+		UINT64 u64EndUs = HCHead::getCurrentTimestampUs();
+		UINT64 u64Int = u64EndUs - u64TS;
+
+		if (u64Int <= iMs*1000)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void HCLidar::setLidarPowerOn(bool bPowerOn)
+{
+	m_bDisconnect = !bPowerOn;
+}
 
 ///////////////////////////////
 bool HCLidar::rockCheckLDSInfo(UINT8* buffer, unLidarInfo& lds_info)

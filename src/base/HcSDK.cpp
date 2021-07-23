@@ -135,7 +135,15 @@ bool startSDKFactoryModeRun()
 	return g_device.startFactoryModeRun();
 }
 
+void setCircleDataMode()
+{
+	g_device.setCircleDataMode();
+}
 
+void setLidarPowerOn(bool bPowerOn)
+{
+	g_device.setLidarPowerOn(bPowerOn);
+}
 
 #ifdef __cplusplus
 };

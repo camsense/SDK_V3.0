@@ -62,6 +62,9 @@ extern "C" {
 
 	bool startSDKFactoryModeRun();
 	
+	void setCircleDataMode();
+
+	void setLidarPowerOn(bool bPowerOn);
 
 #ifdef __cplusplus
 };

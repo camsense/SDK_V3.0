@@ -62,6 +62,7 @@ typedef struct tsSDKPara
 	int           iCoverPoints;  //
 	int           iPollBuffSize;  //POLL mode ,buff max size
 	int           iCallbackBuffSize; //Callback mode ,buff size
+	int           iCirclesBuffSize;//POLL mode, circle max size
 
 	tsSDKPara()
 	{
@@ -74,6 +75,7 @@ typedef struct tsSDKPara
 		iCoverPoints = 100;
 		iPollBuffSize = 3000;
 		iCallbackBuffSize = 50;
+		iCirclesBuffSize = 3;
 	}
 }tsSDKPara;
 
@@ -98,7 +100,7 @@ enum LiDarErrorCode
 	ERR_SERIAL_SETCOMMTIMEOUTS_FAILED = -1002,//set COM timeouts
 	ERR_SERIAL_READFILE_FAILED = -1003,//read COM Failed
 	ERR_SERIAL_READFILE_ZERO = -1004,//read COM NULL
-	ERR_FIND_HEAD_TIMEOUT = -1005,//Find packet header error
+	ERR_FIND_HEAD_TIMEOUT = -1005,//Find packet header error  100ms
 	ERR_CHECKDATA_INVALID = -1006,//packet cal failed
 	ERR_GETPACKAGE_FAILED = -1007,//get packet failed
 	ERR_DATABYTELENGTH_INVALID = -1008,//Lidar packet error
@@ -125,9 +127,12 @@ enum LiDarErrorCode
 	ERR_LIDAR_FPS_INVALID = -3001,//fps 
 	ERR_LIDAR_SPEED_LOW = -3002,//speed low
 	ERR_LIDAR_SPEED_HIGH = -3003,//speed high
-	ERR_LIDAR_NUMBER_INVALID = -3004,//pointcloud too little
+	ERR_LIDAR_NUMBER_INVALID = -3004,//pointcloud too little,1 circle valid < 50, and continue 50 circles
 	ERR_LIDAR_SAME_ANGLE = -3005, //continue same a angle
-
+	ERR_LIDAR_ENCODER = -3006,// Lidar encoder error,after powered 5s ,speed 0 and 1023 in a second,and no blocked msg
+	ERR_LIDAR_SENSOR = -3007,// Lidar sensor error,after powered 5s ,FPS=0 and ERR_LIDAR_FPS_INVALID,and no blocked msg  in a second
+	ERR_LIDAR_VOLTAGE = -3008,// Lidar voltage error, 5s no ID,no dist data
+	ERR_LIDAR_PD_CURRENT = -3009,// Lidar current error, speed ok,FPS ok, no valid pointclouds
 };
 
 

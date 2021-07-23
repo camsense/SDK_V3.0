@@ -18,7 +18,10 @@ ADD_EXECUTABLE (sdk_scanData sdk_scanData.cpp)
 TARGET_LINK_LIBRARIES (sdk_scanData lidar)
 
 ADD_EXECUTABLE (BS_Demo BS_Demo.cpp LidarTest.cpp)
+TARGET_LINK_LIBRARIES (BS_Demo lidar)
 
+ADD_EXECUTABLE (hc_test hc_test.cpp LidarTest.cpp)
+TARGET_LINK_LIBRARIES (hc_test lidar)
 if(UNIX)
 
 if(CMAKE_TOOLCHAIN_FILE)

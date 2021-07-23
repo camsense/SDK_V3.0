@@ -67,12 +67,12 @@
 #define  MSG_POINTCLOUD                 3
 
 #define  FPS_1800_NOR                   1800
-#define  FPS_2000_NOR                   2085
-#define  FPS_3000_NOR                   3000
+#define  FPS_2000_NOR                   2104 //2085  // 2100
+#define  FPS_3000_NOR                   3074 //3000  
 #define  FPS_TOF_NOR                    3300
 #define  FPS_1800_RANGE                 50
 #define  FPS_2000_RANGE                 50
-#define  FPS_3000_RANGE                 50
+#define  FPS_3000_RANGE                 100
 #define  FPS_TOF_RANGE                  200
 #define  FPS_1800_MAX                   (FPS_1800_NOR+FPS_1800_RANGE)
 #define  FPS_1800_MIN                   (FPS_1800_NOR-FPS_1800_RANGE)
@@ -82,6 +82,14 @@
 #define  FPS_3000_MIN                   (FPS_3000_NOR-FPS_3000_RANGE)
 #define  FPS_TOF_MAX                    (FPS_TOF_NOR+FPS_TOF_RANGE)
 #define  FPS_TOF_MIN                    (FPS_TOF_NOR-FPS_TOF_RANGE)
+
+#define  ANGLE_RESOLV_1800              1.09
+#define  ANGLE_RESOLV_2000              0.92
+#define  ANGLE_RESOLV_3000              0.75
+
+#define  CICRLE_MAX_1800                370
+#define  CICRLE_MAX_2000                415
+#define  CICRLE_MAX_3000                520
 
 #define  SPEED_300_NOR                  300
 #define  SPEED_312_NOR                  312
@@ -107,6 +115,12 @@
 #define  NUMBER_CONTINUE_CIRCLE         50  
 #define  NUMBER_CONTINUE_ERROR_PACKET   10  
 
+#define  SENSOR_ERROR_SECOND            5  
+#define  SENSOR_ERROR_TIME_MS           1000  
+#define  ENCODER_ERROR_SECOND           5  
+#define  ENCODER_ERROR_TIME_MS          1000  
+#define  LDS_VOLTAGE_ERROR_SECOND       5  
+#define  PD_ERROR_TIME_MS               3000  
 
 union Fp32
 {

@@ -15,6 +15,7 @@
 #include <condition_variable>
 #include <atomic>
 #include <functional>
+#include <map>
 
 #include "HcData.h"
 
@@ -138,6 +139,13 @@ public:
 	}
 	bool startFactoryModeRun();
 
+	void setCircleDataMode()
+	{
+		m_bCircle = true;
+	}
+
+	void setLidarPowerOn(bool bPowerOn=true);
+
 private:
 	
 #if SHARK_ENABLE
@@ -197,6 +205,9 @@ private:
     double                   m_dAnglePre = 0;
     bool                     m_bTurn = false;
     bool                     m_bFirsLoop = false;
+	bool                     m_bCircle = false;
+	LstPointCloud            m_lstCircle;
+	std::vector<LstPointCloud> m_Circles;
 
 
 	std::atomic<bool>        m_bInitTimeout;
@@ -234,15 +245,23 @@ private:
     int                      m_iSpeedMax = 420;
     int                      m_iSpeedMin = 300;
     int                      m_iCircleNumberMAX=415;
+	double                   m_dAngleStep = 0.9;
+	double                   m_dCirclePoints = 415;
 
     int                      m_iInvalidFPSSecond=0;
     UINT64                   m_u64StartTimeLowSpeed=0;
     UINT64                   m_u64StartTimeHighSpeed=0;
+	UINT64                   m_u64StartTimeSpeed = 0;
     UINT64                   m_u64StartTimeSharkBlock=0;
     int                      m_iSharkBlockCount=0;
     UINT64                   m_u64StartTimeInvalidPoints=0;
     int                      m_iValidNumber = 0;
+	UINT64                   m_u64StartTimeFindPackHeader = 0;
+	UINT16                   m_u16Speed = 0;
+	std::map<int, UINT64>    m_mapErrorCode;
+	std::mutex               m_mtxError;
 
+	UINT64                   m_u64CountS = 0;
     UINT64                   m_u64StartMS = 0;
     inline bool bIntervalOneSecond(UINT64& u64StartUS)
     {
@@ -286,10 +305,14 @@ private:
     void checkInvalidFPS(int iFPS);
     void checkInvalidLowSpeed(UINT16 u16Speed);
     void checkInvalidHighSpeed(UINT16 u16Speed);
+	void checkEncoderError(UINT16 u16Speed);
     void checkSharkBlocked();
     void checkSharkInvalidPoints(tsPointCloud& sData);
     void checkHadInitSuccess(bool bTimeout);
+	void checkLDSVoltage();
+	void checkPDCurrent();
 
+	void checkFindPackHeader();
 
     void grabScanDataWithLoop(std::list<tsNodeInfo>& nodeList, tsNodeInfo* nodebuffer, size_t buffLen);
     void pushValidData2Buffer(tsNodeInfo& nodeInfo, int index, tsNodeInfo* nodebuffer, int len);
@@ -302,6 +325,12 @@ private:
     void pushDataWithLoopMode(bool& isTurn, std::list<tsNodeInfo>& loopNodeList, tsNodeInfo& node_cur);
     void checkInvalidLidarNumber(int validNumber);
     void callbackDistQ2();
+
+	void pollModePointCloud();
+	void callBackFunPointCloud();
+	bool getOneCircleData();
+
+	bool getErrorCode(int iError, int iMs);
 
 	//////////////////////////////////////
 	bool rockCheckLDSInfo(UINT8* buffer, unLidarInfo& lds_info);
