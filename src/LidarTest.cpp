@@ -34,7 +34,7 @@ void LidarTest::sdkCallBackFunErrorCode(int iErrorCode)
 
 void LidarTest::sdkCallBackFunSecondInfo(tsSDKStatistic sInfo)
 {
-	printf("HCSDK Main: sdkCallBackFunSecondInfo time=%lld s,points=%d,GrayBytes=%d,FPS=%d,speed=%0.2f,PPS=%d,valid=%d,invalid=%d,ErrorPacket=%d\n" , 
+	printf("HCSDK Main: sdkCallBackFunSecondInfo time=%lld s,points=%d,GrayBytes=%d,FPS=%lld,speed=%0.2f,PPS=%d,valid=%d,invalid=%d,ErrorPacket=%lld\n" , 
 		sInfo.u64TimeStampS , sInfo.iNumPerPacket, sInfo.iGrayBytes , sInfo.u64FPS
 		,sInfo.dRMS , sInfo.iPacketPerSecond,sInfo.iValid , sInfo.iInvalid
 		, sInfo.u64ErrorPacketCount);

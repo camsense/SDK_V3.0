@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"3.0.9"
+#define SDK_VER                    (char*)"3.0.9a"
 
 #define SHARK_ENABLE               0
 
@@ -67,12 +67,12 @@
 #define  MSG_POINTCLOUD                 3
 
 #define  FPS_1800_NOR                   1800
-#define  FPS_2000_NOR                   2104 //2085  // 2100
-#define  FPS_3000_NOR                   3074 //3000  
+#define  FPS_2000_NOR                   2104 //2088  // 2100
+#define  FPS_3000_NOR                   3084 //3012  
 #define  FPS_TOF_NOR                    3300
 #define  FPS_1800_RANGE                 50
 #define  FPS_2000_RANGE                 50
-#define  FPS_3000_RANGE                 100
+#define  FPS_3000_RANGE                 50
 #define  FPS_TOF_RANGE                  200
 #define  FPS_1800_MAX                   (FPS_1800_NOR+FPS_1800_RANGE)
 #define  FPS_1800_MIN                   (FPS_1800_NOR-FPS_1800_RANGE)
@@ -88,8 +88,8 @@
 #define  ANGLE_RESOLV_3000              0.75
 
 #define  CICRLE_MAX_1800                370
-#define  CICRLE_MAX_2000                415
-#define  CICRLE_MAX_3000                520
+#define  CICRLE_MAX_2000                415  // 5.2hz
+#define  CICRLE_MAX_3000                515  // 6hz
 
 #define  SPEED_300_NOR                  300
 #define  SPEED_312_NOR                  312
@@ -324,6 +324,9 @@ static char*  print_curr_time()
 {
 	time_t now = time(nullptr);
 	tm* curr_tm = localtime(&now);
+
+	//tm curr_tm;
+	//localtime_s(&curr_tm,&now);
 	static char time[80] = { 0 };
 	strftime(time, 80, "%Y-%m-%d %H:%M:%S    ", curr_tm);
 	//printf(time);

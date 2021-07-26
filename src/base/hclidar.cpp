@@ -518,39 +518,49 @@ void HCLidar::readData()
 
         if(iRC == 0)
         {
-            m_iReadTimeoutCount++;
-            int iTemp = m_sSDKPara.iNoDataMS / m_iReadTimeOutms;
-            int iTemp2 = m_sSDKPara.iDisconnectMS / m_iReadTimeOutms;
-            if(m_iReadTimeoutCount%iTemp == 0)
-            {
-				LOG_WARNING("Lidar read timeout!\n");
-
-                setReadCharsError(iRC);
-            }
-            
-			if(m_iReadTimeoutCount >= iTemp2 )
-            {
-				LOG_ERROR("Lidar disconnect! status=%d\n" , static_cast<int>(m_iSDKStatus) );
-                if(m_iSDKStatus == SDK_INIT)
-                {
-                    checkHadInitSuccess(true);
-                    return;
-                }
-                m_iReadTimeoutCount = 0;
-                m_bDisconnect = true;
-                lidarReConnect();
-                m_iSDKStatus = SDK_DISCONNECT;
-				if (m_bFactoryMode)
+			if (m_u64StartTimeNoData > 0)
+			{
+				UINT64 endTime = HCHead::getCurrentTimestampUs();
+				if ((endTime - m_u64StartTimeNoData) >= m_sSDKPara.iNoDataMS * 1000)
 				{
-					m_bHadID = false;
-					m_bGetIDTimeOut = false;
-					m_bHadFact = false; 
-					m_bGetFactTimeOut = false;
+					LOG_WARNING("Lidar read timeout!\n");
+
+					setReadCharsError(iRC);
+					m_u64StartTimeNoData = 0;
+
+					m_iReadTimeoutCount++;
+
+					int iTemp2 = m_sSDKPara.iDisconnectMS / m_sSDKPara.iNoDataMS;
+					if (m_iReadTimeoutCount >= iTemp2)
+					{
+						LOG_ERROR("Lidar disconnect! status=%d\n", static_cast<int>(m_iSDKStatus));
+						if (m_iSDKStatus == SDK_INIT)
+						{
+							checkHadInitSuccess(true);
+							return;
+						}
+						m_iReadTimeoutCount = 0;
+						m_bDisconnect = true;
+						lidarReConnect();
+						m_iSDKStatus = SDK_DISCONNECT;
+						if (m_bFactoryMode)
+						{
+							m_bHadID = false;
+							m_bGetIDTimeOut = false;
+							m_bHadFact = false;
+							m_bGetFactTimeOut = false;
+						}
+
+
+						setReadCharsError(ERR_DISCONNECTED);
+					}
 				}
-
-
-                setReadCharsError(ERR_DISCONNECTED);
-            }
+			}
+			else
+			{
+				m_u64StartTimeNoData = HCHead::getCurrentTimestampUs();
+			}
+			
 
         }
         else
@@ -561,38 +571,14 @@ void HCLidar::readData()
         return;
     }
     m_iReadTimeoutCount=0;
+	m_u64StartTimeNoData = 0;
     m_bDisconnect = false;
 
-#if DEBUG_INFO
-	std::ofstream outFile;
-	outFile.open("t1.txt", std::ios::app);
-	char chTemp[20] = {0};
-	std::string strTemp = "";
-
-	std::lock_guard<std::mutex> lock(m_mtxBuff);
-	for (int i = 0; i < iRC; i++)
-	{
-		m_lstTemp.push_back(m_p8Buff[i]);
-
-		memset(chTemp, 0, 20);
-		sprintf(chTemp, "%02X ", m_p8Buff[i]);
-		if(m_p8Buff[i] == 0xAA)
-			strTemp += "\n" + std::string(chTemp);
-		else
-			strTemp += std::string(chTemp);
-	}
-
-	outFile.write(strTemp.c_str(), strTemp.size());
-	outFile.flush();
-	outFile.close();
-
-#else
 	std::lock_guard<std::mutex> lock(m_mtxBuff);
 	for (int i = 0; i < iRC; i++)
 	{
 		m_lstTemp.push_back(m_p8Buff[i]);
 	}
-#endif
     
 }
 
@@ -1037,11 +1023,11 @@ bool HCLidar::getDevID(std::vector<UCHAR>& lstBuff)
         }
         else
         {
-#if SHARK_ENABLE
-            m_strDevID = std::string(DEFAULT_ID);
-#else
-			m_strDevID = "";
-#endif
+			if (m_strLidarModel == X2N)
+				m_strDevID = std::string(DEFAULT_ID);
+			else
+				m_strDevID = "";
+
 
 			LOG_ERROR("ID cal error!\n" );
 
@@ -1183,15 +1169,20 @@ bool HCLidar::getStartInfo(std::vector<UCHAR>& lstBuff)
             }
 
             memset(chTemp,0,128);
-#if SHARK_ENABLE
-            sprintf(chTemp, "00000000000000000000%02X%02X%02X%02X%02X%02X%02X",
-                                sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4], sNewInfo.u8FacInfo[5],
-                                sNewInfo.u8ID[0], sNewInfo.u8ID[1], sNewInfo.u8ID[2], sNewInfo.u8ID[3]);
-#else
-			sprintf(chTemp, "%02X%02X%02X%02X%02X%02X%02X",
-				sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4], sNewInfo.u8FacInfo[5],
-				sNewInfo.u8ID[0], sNewInfo.u8ID[1], sNewInfo.u8ID[2], sNewInfo.u8ID[3]);
-#endif
+
+			if (m_strLidarModel == X2N)
+			{
+				sprintf(chTemp, "00000000000000000000%02X%02X%02X%02X%02X%02X%02X",
+					sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4], sNewInfo.u8FacInfo[5],
+					sNewInfo.u8ID[0], sNewInfo.u8ID[1], sNewInfo.u8ID[2], sNewInfo.u8ID[3]);
+			}
+			else
+			{
+				sprintf(chTemp, "%02X%02X%02X%02X%02X%02X%02X",
+					sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4], sNewInfo.u8FacInfo[5],
+					sNewInfo.u8ID[0], sNewInfo.u8ID[1], sNewInfo.u8ID[2], sNewInfo.u8ID[3]);
+			}
+						
 
             m_strDevID = chTemp;
 
@@ -1752,94 +1743,95 @@ bool HCLidar::checkDataCal(std::vector<UCHAR>& lstBuff, int iIndex)
 }
 bool HCLidar::getRxPointClouds(LstPointCloud& lstG)
 {
-#if SHARK_ENABLE
-    if(!m_bPollMode)
-    {
-        setReadCharsError(ERR_POLL_MODE);
-        return false;
-    }
-    if(lstG.size() > 0)
-    {
-        LstPointCloud tmp;
-        tmp.swap(lstG);
-    }
-	int iError = m_iLastErrorCode;
-
-	bool bOK = true;
-	switch (iError)
+	if (m_strLidarModel == X2N)
 	{
-	case ERR_SHARK_MOTOR_BLOCKED:
-
-	case ERR_SHARK_INVALID_POINTS:
-
-	case ERR_LIDAR_SPEED_LOW:
-
-	case ERR_LIDAR_SPEED_HIGH:
-
-	case ERR_DISCONNECTED:
-	case ERR_LIDAR_FPS_INVALID:
-		bOK = false;
-		
-		break;
-	
-	default:
-		break;
-	}
-
-	if (bOK)
-	{
-		std::lock_guard<std::mutex> lock(m_mtxData);
-		if (m_resultRange.size() > 0)
+		if (!m_bPollMode)
 		{
-			lstG.swap(m_resultRange);
-			std::stable_sort(lstG.begin(), lstG.end(), newComparator);
+			setReadCharsError(ERR_POLL_MODE);
+			return false;
 		}
-	}
-	else
-	{
-		std::lock_guard<std::mutex> lock(m_mtxData);
-		if (m_resultRange.size() > 0)
+		if (lstG.size() > 0)
 		{
 			LstPointCloud tmp;
-			m_resultRange.swap(tmp);
+			tmp.swap(lstG);
 		}
-	}
-    
-	return bOK;
+		int iError = m_iLastErrorCode;
 
-#else
-	if (!m_bPollMode)
-	{
-		setReadCharsError(ERR_POLL_MODE);
-		return false;
-	}
-	if (lstG.size() > 0)
-	{
-		LstPointCloud tmp;
-		tmp.swap(lstG);
-	}
-	std::lock_guard<std::mutex> lock(m_mtxData);
-	if (m_bCircle)
-	{
-		if (m_Circles.size() > 0)
+		bool bOK = true;
+		switch (iError)
 		{
-			LstPointCloud tmp = *m_Circles.begin();
-			lstG.swap(tmp);
-			m_Circles.erase(m_Circles.begin());
+		case ERR_SHARK_MOTOR_BLOCKED:
+
+		case ERR_SHARK_INVALID_POINTS:
+
+		case ERR_LIDAR_SPEED_LOW:
+
+		case ERR_LIDAR_SPEED_HIGH:
+
+		case ERR_DISCONNECTED:
+		case ERR_LIDAR_FPS_INVALID:
+			bOK = false;
+
+			break;
+
+		default:
+			break;
 		}
-		
+
+		if (bOK)
+		{
+			std::lock_guard<std::mutex> lock(m_mtxData);
+			if (m_resultRange.size() > 0)
+			{
+				lstG.swap(m_resultRange);
+				std::stable_sort(lstG.begin(), lstG.end(), newComparator);
+			}
+		}
+		else
+		{
+			std::lock_guard<std::mutex> lock(m_mtxData);
+			if (m_resultRange.size() > 0)
+			{
+				LstPointCloud tmp;
+				m_resultRange.swap(tmp);
+			}
+		}
+
+		return bOK;
 	}
 	else
 	{
-		if (m_resultRange.size() > 0)
+		if (!m_bPollMode)
 		{
-			lstG.swap(m_resultRange);
+			setReadCharsError(ERR_POLL_MODE);
+			return false;
 		}
-	}
-	
-	return true;
+		if (lstG.size() > 0)
+		{
+			LstPointCloud tmp;
+			tmp.swap(lstG);
+		}
+		std::lock_guard<std::mutex> lock(m_mtxData);
+		if (m_bCircle)
+		{
+			if (m_Circles.size() > 0)
+			{
+				LstPointCloud tmp = *m_Circles.begin();
+				lstG.swap(tmp);
+				m_Circles.erase(m_Circles.begin());
+			}
 
-#endif
+		}
+		else
+		{
+			if (m_resultRange.size() > 0)
+			{
+				lstG.swap(m_resultRange);
+			}
+		}
+
+		return true;
+	}
 }
 
 
@@ -1922,7 +1914,7 @@ void HCLidar::checkEncoderError(UINT16 u16Speed)
 {
 	if (u16Speed == 0 || u16Speed == 1023)
 	{
-		LOG_INFO("Speed error=%d\n", u16Speed);
+		//LOG_INFO("Speed error=%d\n", u16Speed);
 		if (m_u64StartTimeSpeed != 0)
 		{
 			UINT64 endTime = HCHead::getCurrentTimestampUs();
@@ -1984,7 +1976,7 @@ void HCLidar::checkSharkBlocked()
         {
             if(m_iSharkBlockCount>0)
             {
-				LOG_ERROR("Shark moto block\n");
+				//LOG_ERROR("Shark moto block\n");
                 setReadCharsError(ERR_SHARK_MOTOR_BLOCKED);
                 m_u64StartTimeSharkBlock = 0;
                 m_iSharkBlockCount=0;
@@ -2221,7 +2213,7 @@ void HCLidar::grabScanData(tsNodeInfo * nodebuffer, size_t buffLen, size_t &coun
     {
         if (count > buffLen)
         {
-			LOG_ERROR("Rx buffer is too small\n" );
+			//LOG_ERROR("Rx buffer is too small\n" );
             setReadCharsError(ERR_RECEIVE_BUFFER_SMALL);
             count = 0;
             return;

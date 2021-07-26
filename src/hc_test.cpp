@@ -41,7 +41,7 @@ void sdkCallBackFunSecondInfo(tsSDKStatistic sInfo)
 	outFile.open(strFile, std::ios::app);
 
 	char buff[128] = { 0 };
-	sprintf(buff, "%lld,%d,%d,%lld,%0.2f,%d,%d,%d,%d\n",
+	sprintf(buff, "%lld,%d,%d,%lld,%0.2f,%d,%d,%d,%lld\n",
 		sInfo.u64TimeStampS, sInfo.iNumPerPacket, sInfo.iGrayBytes, sInfo.u64FPS
 		, sInfo.dRMS,  sInfo.iValid, sInfo.iInvalid, sInfo.iPacketPerSecond
 		, sInfo.u64ErrorPacketCount);
@@ -180,7 +180,8 @@ int main()
         
     }
 
-
+	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+	g_strLidarID = getSDKLidarID();
 	
 	printf( "Lidar ID=%s\n" , getSDKLidarID());
 	printf( "Factory Info:%s\n" , getSDKFactoryInfo());
@@ -188,10 +189,7 @@ int main()
 	printf( "Main: Hardware ver:%s\n", getSDKHardwareVersion());
 	printf( "Main: Lidar model:%s\n" , getSDKLidarModel() );
 
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	g_strLidarID = getSDKLidarID();
-
+	
 
 	std::string strFile = "";
 	if (g_strLidarID.size() > DEFAULT_ID_LEN)
@@ -203,6 +201,8 @@ int main()
 	outFile.open(strFile, std::ios::app);
 	char buff[128] = { 0 };
 
+
+	std::vector<UINT16> lstDist;
 	std::vector<UINT16> lstWhite;
 	std::vector<UINT16> lstLattice;
 	int iTestCount = 0;
@@ -237,7 +237,9 @@ int main()
 						{
 							if (!sInfo.bValid)
 								continue;
-		
+							//lstDist.push_back(sInfo.u16Dist);
+							//printf("Main: Angle=%0.4f, Dist=%d\n", sInfo.dAngle, sInfo.u16Dist);
+							
 							if (sInfo.dAngle > 181 && sInfo.dAngle < 182)
 							{
 								u16Dist = sInfo.u16Dist;
@@ -262,6 +264,18 @@ int main()
 								
 							
 						}
+						/*
+						if (lstDist.size() > 2000)
+						{
+
+							printf("-----------------------------------------------------\n");
+							std::sort(lstDist.begin(), lstDist.end());
+							UINT16 dDist = std::accumulate(lstDist.begin(), lstDist.end(), 0) / lstDist.size();
+							printf("Main:Dist size=%d, mean=%d, median=%d\n", lstDist.size(), dDist, lstDist.at(lstDist.size() / 2));
+
+
+							lstDist.clear();
+						}*/
 
 						if (lstLattice.size() >= GRAY_COUNT_MAX && lstWhite.size() >= GRAY_COUNT_MAX)
 						{
@@ -344,8 +358,8 @@ int main()
 		if (iCount > 100)
 		{
 			iCount = 0;
-			g_strLidarID = getSDKLidarID();
-			printf("Main:Lidar ID=%s\n", g_strLidarID.c_str());
+			//g_strLidarID = getSDKLidarID();
+			//printf("Main:Lidar ID=%s\n", g_strLidarID.c_str());
 		}
 		
 

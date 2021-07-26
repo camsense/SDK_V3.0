@@ -38,7 +38,7 @@ void sdkCallBackFunSecondInfo(tsSDKStatistic sInfo)
 	outFile.open(strFile, std::ios::app);
 
 	char buff[128] = { 0 };
-	sprintf(buff, "%lld,%d,%d,%lld,%0.2f,%d,%d,%d,%d\n",
+	sprintf(buff, "%lld,%d,%d,%lld,%0.2f,%d,%d,%d,%lld\n",
 		sInfo.u64TimeStampS, sInfo.iNumPerPacket, sInfo.iGrayBytes, sInfo.u64FPS
 		, sInfo.dRMS,  sInfo.iValid, sInfo.iInvalid, sInfo.iPacketPerSecond
 		, sInfo.u64ErrorPacketCount);
@@ -121,7 +121,6 @@ std::string getLidarModel()
 int main()
 {
 
-    //HCLidar& device= HCLidar::getInstance();
     int rtn = 0;
 
     bool bPollMode = true;

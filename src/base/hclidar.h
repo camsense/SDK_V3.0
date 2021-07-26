@@ -240,6 +240,7 @@ private:
     bool                     m_bReady = false;
     tsSDKPara                m_sSDKPara;
     int                      m_iReadTimeoutCount=0;
+	UINT64                   m_u64StartTimeNoData = 0;
     int                      m_iFPSMax = 2120;
     int                      m_iFPSMin = 2050;
     int                      m_iSpeedMax = 420;

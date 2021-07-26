@@ -124,9 +124,9 @@ enum LiDarErrorCode
 
 
 	//Lidar erro
-	ERR_LIDAR_FPS_INVALID = -3001,//fps 
-	ERR_LIDAR_SPEED_LOW = -3002,//speed low
-	ERR_LIDAR_SPEED_HIGH = -3003,//speed high
+	ERR_LIDAR_FPS_INVALID = -3001,//fps , continue 5000ms default.
+	ERR_LIDAR_SPEED_LOW = -3002,//speed low, continue 3500ms default.
+	ERR_LIDAR_SPEED_HIGH = -3003,//speed high, continue 3500ms default.
 	ERR_LIDAR_NUMBER_INVALID = -3004,//pointcloud too little,1 circle valid < 50, and continue 50 circles
 	ERR_LIDAR_SAME_ANGLE = -3005, //continue same a angle
 	ERR_LIDAR_ENCODER = -3006,// Lidar encoder error,after powered 5s ,speed 0 and 1023 in a second,and no blocked msg
