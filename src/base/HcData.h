@@ -188,7 +188,6 @@ typedef struct tsPointCloud
 	UINT16       u16Gray;      // luminance
 	bool         bGrayTwoByte; // true  u16Gray 2byte ,false u16Gray 1byte 
 	UINT64       u64TimeStampMs;    // timestamp ,ms  
-	int          iType; // 0: 不需要补偿  1：需要补偿
 	float        fTemperature;//温度
 	tsPointCloud() :
 		bValid(true),
@@ -201,7 +200,6 @@ typedef struct tsPointCloud
 		u16Gray(0),
 		bGrayTwoByte(false),
 		u64TimeStampMs(0),
-		iType(0),
 		fTemperature(0)
 	{}
 }tsPointCloud;

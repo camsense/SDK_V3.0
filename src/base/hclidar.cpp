@@ -110,7 +110,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_2000_MIN;
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
-        m_iCircleNumberMAX=415;
+        //m_iCircleNumberMAX=415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
     }
@@ -122,7 +122,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_2000_MIN;
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
-        m_iCircleNumberMAX=415;
+        //m_iCircleNumberMAX=415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
     }
@@ -134,7 +134,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_2000_MIN;
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
-        m_iCircleNumberMAX=415;
+        //m_iCircleNumberMAX=415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
     }
@@ -146,7 +146,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_2000_MIN;
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
-        m_iCircleNumberMAX=415;
+        //m_iCircleNumberMAX=415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
     }
@@ -158,7 +158,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iFPSMin = FPS_3000_MIN;
 		m_iSpeedMax = SPEED_312_MAX;
 		m_iSpeedMin = SPEED_312_MIN;
-		m_iCircleNumberMAX = 415;
+		//m_iCircleNumberMAX = 415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
 	}
@@ -170,7 +170,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iFPSMin = FPS_2000_MIN;
 		m_iSpeedMax = SPEED_312_MAX;
 		m_iSpeedMin = SPEED_312_MIN;
-		m_iCircleNumberMAX = 415;
+		//m_iCircleNumberMAX = 415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
 	}
@@ -182,7 +182,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iFPSMin = FPS_2000_MIN;
 		m_iSpeedMax = SPEED_312_MAX;
 		m_iSpeedMin = SPEED_312_MIN;
-		m_iCircleNumberMAX = 415;
+		//m_iCircleNumberMAX = 415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
 	}
@@ -194,7 +194,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_2000_MIN;
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
-        m_iCircleNumberMAX=415;
+       // m_iCircleNumberMAX=415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
     }
@@ -206,7 +206,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iFPSMin = FPS_3000_MIN;
 		m_iSpeedMax = SPEED_312_MAX;
 		m_iSpeedMin = SPEED_312_MIN;
-		m_iCircleNumberMAX = 415;
+		//m_iCircleNumberMAX = 415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
 	}
@@ -218,7 +218,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iFPSMin = FPS_1800_MIN;
 		m_iSpeedMax = SPEED_300_MAX;
 		m_iSpeedMin = SPEED_300_MIN;
-		m_iCircleNumberMAX = 415;
+		//m_iCircleNumberMAX = 415;
 		m_dAngleStep = ANGLE_RESOLV_1800;
 		m_dCirclePoints = CICRLE_MAX_1800;
 	}
@@ -230,7 +230,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_3000_MIN;
         m_iSpeedMax = SPEED_360_MAX;
         m_iSpeedMin = SPEED_360_MIN;
-        m_iCircleNumberMAX=515;
+        //m_iCircleNumberMAX=515;
 		m_dAngleStep = ANGLE_RESOLV_3000;
 		m_dCirclePoints = CICRLE_MAX_3000;
     }
@@ -242,7 +242,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_2000_MIN;
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
-        m_iCircleNumberMAX=415;
+        //m_iCircleNumberMAX=415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_2000;
     }
@@ -254,7 +254,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_3000_MIN;
         m_iSpeedMax = SPEED_360_MAX;
         m_iSpeedMin = SPEED_360_MIN;
-        m_iCircleNumberMAX=515;
+        //m_iCircleNumberMAX=515;
 		m_dAngleStep = ANGLE_RESOLV_3000;
 		m_dCirclePoints = CICRLE_MAX_3000;
     }
@@ -266,7 +266,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_3000_MIN;
         m_iSpeedMax = SPEED_360_MAX;
         m_iSpeedMin = SPEED_360_MIN;
-        m_iCircleNumberMAX=515;
+        //m_iCircleNumberMAX=515;
 		m_dAngleStep = ANGLE_RESOLV_3000;
 		m_dCirclePoints = CICRLE_MAX_3000;
     }
@@ -278,7 +278,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_3000_MIN;
         m_iSpeedMax = SPEED_360_MAX;
         m_iSpeedMin = SPEED_360_MIN;
-        m_iCircleNumberMAX=415;
+        //m_iCircleNumberMAX=415;
 		m_dAngleStep = ANGLE_RESOLV_3000;
 		m_dCirclePoints = CICRLE_MAX_3000;
     }
@@ -291,7 +291,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_2000_MIN;
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
-        m_iCircleNumberMAX=515;
+        //m_iCircleNumberMAX=515;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_3000;
     }
@@ -304,7 +304,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_iFPSMin = FPS_2000_MIN;
         m_iSpeedMax = SPEED_312_MAX;
         m_iSpeedMin = SPEED_312_MIN;
-        m_iCircleNumberMAX=415;
+        //m_iCircleNumberMAX=415;
 		m_dAngleStep = ANGLE_RESOLV_2000;
 		m_dCirclePoints = CICRLE_MAX_3000;
     }
@@ -317,9 +317,9 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_iFPSMin = FPS_TOF_MIN;
 		m_iSpeedMax = SPEED_TOF_MAX;
 		m_iSpeedMin = SPEED_TOF_MIN;
-		m_iCircleNumberMAX = 415;
-		m_dAngleStep = ANGLE_RESOLV_3000;
-		m_dCirclePoints = CICRLE_MAX_3000;
+		//m_iCircleNumberMAX = 415;
+		m_dAngleStep = ANGLE_RESOLV_TOF;
+		m_dCirclePoints = CICRLE_MAX_TOF;
 	}
     else
     {
@@ -488,6 +488,8 @@ void HCLidar::setReadCharsError(int errCode)
         m_iLastErrorCode = errCode;
         break;
     }
+	int iTemp = m_iLastErrorCode;
+	LOG_ERROR("Error code:%d\n", iTemp);
 
     if(m_funErrorCode)
     {
@@ -515,9 +517,12 @@ void HCLidar::readData()
     int iRC = m_serial.readData(m_p8Buff, READ_BUFF_SIZE, m_iReadTimeOutms);
     if (iRC < 1)
     {
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::yield();
 
         if(iRC == 0)
         {
+
 			if (m_u64StartTimeNoData > 0)
 			{
 				UINT64 endTime = HCHead::getCurrentTimestampUs();
@@ -570,6 +575,9 @@ void HCLidar::readData()
 
         return;
     }
+
+
+
     m_iReadTimeoutCount=0;
 	m_u64StartTimeNoData = 0;
     m_bDisconnect = false;
@@ -579,6 +587,7 @@ void HCLidar::readData()
 	{
 		m_lstTemp.push_back(m_p8Buff[i]);
 	}
+
     
 }
 
@@ -680,11 +689,13 @@ void HCLidar::checkReadPacketData()
 
 		m_sStatistic.dRMS = 0;
 		double dSum = std::accumulate(m_lstSpeed.begin(), m_lstSpeed.end(), 0);
-		if(m_lstSpeed.size())
+		if (m_lstSpeed.size() > 0)
+		{
 			m_sStatistic.dRMS = dSum / m_lstSpeed.size(); //均值
+			m_lstSpeed.clear();
+		}
+			
 
-
-	
 
         if(m_funSecondInfo)
         {
@@ -1480,8 +1491,8 @@ bool HCLidar::parserRangeTof(LstPointCloud &resultRange,const char * chBuff, int
 	m_lstSpeed.push_back(speed);
 
     const double angle_offset = m_dAngleOffsetD;
-	float mAlg = 10.4;
-	float dAlg = 1;
+	//float mAlg = 10.4;
+	//float dAlg = 1;
     for (int i = 0; i < in_numData; ++i)
     {
         double Beforecompensation = FA + dAngle * i;
@@ -1503,12 +1514,6 @@ bool HCLidar::parserRangeTof(LstPointCloud &resultRange,const char * chBuff, int
             sData.bValid = false;
 
 			
-
-		sData.iType = 1;
-		if ((data[1] & 0x40) == 0)
-		{
-			sData.iType = 0;
-		}
 
         sData.u16DistRaw = ((data[1] & 0x003F) << 8) | data[0];
         sData.u16Dist = sData.u16DistRaw;
@@ -1534,19 +1539,21 @@ bool HCLidar::parserRangeTof(LstPointCloud &resultRange,const char * chBuff, int
 		if(!sData.bValid)
         {
             m_sStatistic.iInvalid++;
-            //sData.bValid = false;        // invalid point
+
 			
         }
         if (sData.bValid)
         {
 
             m_sStatistic.iValid++;
-			if (sData.iType == 1)
-			{
-				sData.dAngle = sData.dAngle - 180 / PI_HC * atan2(mAlg, sData.u16Dist - dAlg);
-				sData.u16Dist = sqrt((sData.u16Dist - dAlg) * (sData.u16Dist - dAlg) + mAlg * mAlg);
-				sData.dAngleDisp = sData.dAngle;
-			}
+
+			double dA = 11.3 / sData.u16Dist;
+			double dS = dA * dA;
+			double dTemp = ((-0.0465*dS+0.16)*dS - 0.3276)*dS*dA + dA ;
+			sData.dAngle = sData.dAngle - dTemp * 180 / PI_HC ;
+			sData.u16Dist = sqrt(sData.u16Dist * sData.u16Dist  + 127.69);
+			sData.dAngleDisp = sData.dAngle;
+			
         }
 
         m_sStatistic.dRMS = speed;
@@ -2368,7 +2375,7 @@ void HCLidar::pushDataWithLoopMode(bool& bTurn, std::list<tsNodeInfo>& loopNodeL
         m_bGreaterThan = false;
 
     }
-    else if (loopNodeList.size() >= m_iCircleNumberMAX)
+    else if (loopNodeList.size() >= m_dCirclePoints)
     {
         {
             //std::lock_guard<std::mutex> guard(mutex_);

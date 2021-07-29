@@ -20,6 +20,58 @@ This is a licence-free software, it can be used by anyone who try to build a bet
 
 #ifdef __linux__
 #include <errno.h>
+#include <mutex>
+#include <vector>
+#include <sys/signal.h>
+#include <linux/serial.h>
+#include "hchead.h"
+
+int g_fd = 0;
+
+struct sigaction g_saio;
+struct timeval g_tv;
+
+char g_u8ReadBuff[128];
+
+std::mutex           g_mtxBuff;
+std::vector<UCHAR>   g_lstRx;
+
+void signal_handler_IO(int status)
+{
+	//int nread = read(g_fd, rbuff, 64);
+	//if (nread > 0)
+		//printf("%.*s", nread, rbuff);
+	//LOG_INFO("signal_handler_IO\n");
+
+	int nfds;
+	int nread = 0;
+
+	fd_set readfds;
+	
+
+	FD_ZERO(&readfds);
+	FD_SET(g_fd, &readfds);
+
+	nfds = select(g_fd + 1, &readfds, NULL, NULL, &g_tv);
+
+	if (nfds == 0)
+	{
+		return;
+	}
+	else
+	{
+		nread = read(g_fd, g_u8ReadBuff, 128);
+		//LOG_INFO("signal_handler_IO read=%d\n", nread);
+		std::lock_guard<std::mutex> lock(g_mtxBuff);
+		for (int i = 0; i < nread; i++)
+		{
+			g_lstRx.push_back(g_u8ReadBuff[i]);
+		}
+	}
+
+
+}
+
 #endif
 
 #include <chrono>
@@ -93,12 +145,12 @@ HC_serial::~HC_serial()
 \return -5 error while writing port parameters
 \return -6 error while writing timeout parameters
 */
-char HC_serial::openDevice(const char *Device,const unsigned int Bauds)
+char HC_serial::openDevice(const char *chPort,const unsigned int iBauds)
 {
 #if defined (_WIN32) || defined( _WIN64)
 
     // Open serial port
-    hSerial = CreateFileA(  Device,GENERIC_READ | GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
+    hSerial = CreateFileA(chPort,GENERIC_READ | GENERIC_WRITE,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
     if(hSerial==INVALID_HANDLE_VALUE) {
         if(GetLastError()==ERROR_FILE_NOT_FOUND)
             return -1;                                                  // Device not found
@@ -110,7 +162,7 @@ char HC_serial::openDevice(const char *Device,const unsigned int Bauds)
     dcbSerialParams.DCBlength=sizeof(dcbSerialParams);
     if (!GetCommState(hSerial, &dcbSerialParams))                       // Get the port parameters
         return -3;                                                      // Error while getting port parameters
-    switch (Bauds)                                                      // Set the speed (Bauds)
+    switch (iBauds)                                                      // Set the speed (Bauds)
     {
     case 110  :     dcbSerialParams.BaudRate=CBR_110; break;
     case 300  :     dcbSerialParams.BaudRate=CBR_300; break;
@@ -150,49 +202,19 @@ char HC_serial::openDevice(const char *Device,const unsigned int Bauds)
 
 #endif
 #ifdef __linux__
-    struct termios options;                                             // Structure with the device's options
 
+#if UART_RX_POLL_MODE
+	int iRx = setPollMode(chPort, iBauds);
+	if (iRx < 0)
+		return iRx;
+#else
+	g_tv.tv_sec = 0;
+	g_tv.tv_usec = 2 * 1000;//2ms
 
-    // Open device
-    m_fd = open(Device, O_RDWR | O_NOCTTY | O_NDELAY);                    // Open port
-    if (m_fd == -1)
-    {
-        printf("errno=%d\n",errno);
-        return -2; 
-    }                                                                   // If the device is not open, return -1
-    
-    fcntl(m_fd, F_SETFL, FNDELAY);                                        // Open the device in nonblocking mode
-
-	/*if (linuxUartSet(m_fd, Bauds, 0, 8, 1, 'N') == 0)
-		return -4;*/
-    //// Set parameters
-    tcgetattr(m_fd, &options);                                            // Get the current options of the port
-    bzero(&options, sizeof(options));                                   // Clear all the options
-    speed_t         Speed;
-    switch (Bauds)                                                      // Set the speed (Bauds)
-    {
-    case 110  :     Speed=B110; break;
-    case 300  :     Speed=B300; break;
-    case 600  :     Speed=B600; break;
-    case 1200 :     Speed=B1200; break;
-    case 2400 :     Speed=B2400; break;
-    case 4800 :     Speed=B4800; break;
-    case 9600 :     Speed=B9600; break;
-    case 19200 :    Speed=B19200; break;
-    case 38400 :    Speed=B38400; break;
-    case 57600 :    Speed=B57600; break;
-    case 115200 :   Speed=B115200; break;
-    case 230400 :   Speed=B230400; break;
-    default : return -4;
-    }
-    cfsetispeed(&options, Speed);                                       // Set the baud rate at 115200 bauds
-    cfsetospeed(&options, Speed);
-    options.c_cflag |= ( CLOCAL | CREAD |  CS8);                        // Configure the device : 8 bits, no parity, no control
-    options.c_iflag |= ( IGNPAR | IGNBRK );
-    options.c_cc[VTIME]=0;                                              // Timer unused
-    options.c_cc[VMIN]=0;                                               // At least on character before satisfy reading
-    tcsetattr(m_fd, TCSANOW, &options);                                   // Activate the settings
-
+	int iRx = setInterruptMode(chPort, iBauds);
+	if (iRx < 0)
+		return iRx;
+#endif
 
 #endif
 
@@ -202,136 +224,147 @@ char HC_serial::openDevice(const char *Device,const unsigned int Bauds)
 }
 
 #ifdef __linux__
-int HC_serial::linuxUartSet(int fd, int speed, int flow_ctrl, int databits, int stopbits, int parity)
+
+int HC_serial::setPollMode(const char *chPort, const unsigned int iBauds)
 {
+	struct termios options;                                             // Structure with the device's options
 
-	int   i;
-	int   status;
-	int   speed_arr[] = { B115200, B19200, B9600, B4800, B2400, B1200, B300 };
-	int   name_arr[] = { 115200,  19200,  9600,  4800,  2400,  1200,  300 };
 
+   // Open device
+	m_fd = open(chPort, O_RDWR | O_NOCTTY | O_NDELAY);                    // Open port
+	if (m_fd == -1)
+	{
+		LOG_ERROR("errno=%d\n", errno);
+		return -2;
+	}                                                                   // If the device is not open, return -1
+
+	fcntl(m_fd, F_SETFL, FNDELAY);                                        // Open the device in nonblocking mode
+
+
+	bool bOther = false;
+	speed_t         Speed;
+	switch (iBauds)                                                      // Set the speed (Bauds)
+	{
+		case 110:     Speed = B110; break;
+		case 300:     Speed = B300; break;
+		case 600:     Speed = B600; break;
+		case 1200:     Speed = B1200; break;
+		case 2400:     Speed = B2400; break;
+		case 4800:     Speed = B4800; break;
+		case 9600:     Speed = B9600; break;
+		case 19200:    Speed = B19200; break;
+		case 38400:    Speed = B38400; break;
+		case 57600:    Speed = B57600; break;
+		case 115200:   Speed = B115200; break;
+		case 230400:   Speed = B230400; break;
+		default: bOther = true; break;
+	}
+	if (bOther)
+	{
+		return setLinuxOtherBaud(m_fd, iBauds);
+
+	}
+	else
+	{
+		//// Set parameters
+		tcgetattr(m_fd, &options);                                            // Get the current options of the port
+		bzero(&options, sizeof(options));                                   // Clear all the options
+
+		cfsetispeed(&options, Speed);
+		cfsetospeed(&options, Speed);
+
+		options.c_cflag |= (CLOCAL | CREAD | CS8);                        // Configure the device : 8 bits, no parity, no control
+		options.c_iflag |= (IGNPAR | IGNBRK);
+		options.c_cc[VTIME] = 0;                                              // Timer unused
+		options.c_cc[VMIN] = 0;                                               // At least on character before satisfy reading
+		tcsetattr(m_fd, TCSANOW, &options);                                   // Activate the settings
+	}
+	
+	
+
+	return 0;
+}
+int HC_serial::setInterruptMode(const char *chPort, const unsigned int iBauds)
+{
 	struct termios options;
-
-	/*  tcgetattr(fd,&options)得到与fd指向对象的相关参数，并将它们保存于options,该函数还可以测试配置是否正确，
-		该串口是否可用等。若调用成功，函数返回值为0，若调用失败，函数返回值为1.  */
-	if (tcgetattr(fd, &options) != 0)
+	m_fd = open(chPort, O_RDWR | O_NOCTTY | O_NONBLOCK);// | O_NOCTTY | O_NDELAY
+	if (m_fd == -1)
 	{
-		perror("SetupSerial 1");
-		return 0;
+		LOG_ERROR("errno=%d\n", errno);
+		return -2;
 	}
+	g_fd = m_fd;
 
-	//设置串口输入波特率和输出波特率    
-	for (i = 0; i < sizeof(speed_arr) / sizeof(int); i++)
+	g_saio.sa_handler = signal_handler_IO;
+	sigemptyset(&g_saio.sa_mask);
+	g_saio.sa_flags = 0;
+	g_saio.sa_restorer = NULL;
+	sigaction(SIGIO, &g_saio, NULL);
+
+	fcntl(m_fd, F_SETFL, FNDELAY);
+	fcntl(m_fd, F_SETOWN, getpid());
+	fcntl(m_fd, F_SETFL, O_NDELAY | O_ASYNC); /**<<<<<<------This line made it work.**/
+
+
+	bool bOther = false;
+	speed_t         Speed;
+	switch (iBauds)                                                      // Set the speed (Bauds)
 	{
-		if (speed == name_arr[i])
-		{
-			cfsetispeed(&options, speed_arr[i]);
-			cfsetospeed(&options, speed_arr[i]);
-		}
+		case 110:     Speed = B110; break;
+		case 300:     Speed = B300; break;
+		case 600:     Speed = B600; break;
+		case 1200:     Speed = B1200; break;
+		case 2400:     Speed = B2400; break;
+		case 4800:     Speed = B4800; break;
+		case 9600:     Speed = B9600; break;
+		case 19200:    Speed = B19200; break;
+		case 38400:    Speed = B38400; break;
+		case 57600:    Speed = B57600; break;
+		case 115200:   Speed = B115200; break;
+		case 230400:   Speed = B230400; break;
+		default: bOther = true; break;
 	}
-
-	//修改控制模式，保证程序不会占用串口    
-	options.c_cflag |= CLOCAL;
-	//修改控制模式，使得能够从串口中读取输入数据    
-	options.c_cflag |= CREAD;
-
-	//设置数据流控制    
-	switch (flow_ctrl)
+	if (bOther)
 	{
-
-	case 0://不使用流控制    
-		options.c_cflag &= ~CRTSCTS;
-		break;
-
-	case 1://使用硬件流控制    
-		options.c_cflag |= CRTSCTS;
-		break;
-	case 2://使用软件流控制    
-		options.c_cflag |= IXON | IXOFF | IXANY;
-		break;
+		int iRX = setLinuxOtherBaud(m_fd, iBauds);
+		if (iRX < 0)
+			return iRX;
 	}
-	//设置数据位    
-	//屏蔽其他标志位    
-	options.c_cflag &= ~CSIZE;
-	switch (databits)
+	else
 	{
-	case 5:
-		options.c_cflag |= CS5;
-		break;
-	case 6:
-		options.c_cflag |= CS6;
-		break;
-	case 7:
-		options.c_cflag |= CS7;
-		break;
-	case 8:
-		options.c_cflag |= CS8;
-		break;
-	default:
-		fprintf(stderr, "Unsupported data size\n");
-		return 0;
-	}
-	//设置校验位    
-	switch (parity)
-	{
-	case 'n':
-	case 'N': //无奇偶校验位。    
-		options.c_cflag &= ~PARENB;
-		options.c_iflag &= ~INPCK;
-		break;
-	case 'o':
-	case 'O'://设置为奇校验        
-		options.c_cflag |= (PARODD | PARENB);
-		options.c_iflag |= INPCK;
-		break;
-	case 'e':
-	case 'E'://设置为偶校验      
-		options.c_cflag |= PARENB;
-		options.c_cflag &= ~PARODD;
-		options.c_iflag |= INPCK;
-		break;
-	case 's':
-	case 'S': //设置为空格     
+		tcgetattr(m_fd, &options);                                            // Get the current options of the port
+		bzero(&options, sizeof(options));                                   // Clear all the options
+		
+		cfsetispeed(&options, Speed);
+		cfsetospeed(&options, Speed);
 		options.c_cflag &= ~PARENB;
 		options.c_cflag &= ~CSTOPB;
-		break;
-	default:
-		fprintf(stderr, "Unsupported parity\n");
-		return 0;
-	}
-	// 设置停止位     
-	switch (stopbits)
-	{
-	case 1:
-		options.c_cflag &= ~CSTOPB; break;
-	case 2:
-		options.c_cflag |= CSTOPB; break;
-	default:
-		fprintf(stderr, "Unsupported stop bits\n");
-		return 0;
+		options.c_cflag &= ~CSIZE;
+		options.c_cflag |= CS8;
+		options.c_cflag |= (CLOCAL | CREAD);
+		options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+		options.c_iflag &= ~(IXON | IXOFF | IXANY);
+		options.c_oflag &= ~OPOST;
+		tcsetattr(m_fd, TCSANOW, &options);
+		//printf("serial configured....\n");
+
 	}
 
-	//修改输出模式，原始数据输出    
-	options.c_oflag &= ~OPOST;
+	
+	return 0;
 
-	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-	//options.c_lflag &= ~(ISIG | ICANON);    
-
-	//设置等待时间和最小接收字符    
-	options.c_cc[VTIME] = 1; /* 读取一个字符等待1*(1/10)s */
-	options.c_cc[VMIN] = 1; /* 读取字符的最少个数为1 */
-
-	//如果发生数据溢出，接收数据，但是不再读取 刷新收到的数据但是不读    
-	tcflush(fd, TCIFLUSH);
-
-	//激活配置 (将修改后的termios数据设置到串口中）    
-	if (tcsetattr(fd, TCSANOW, &options) != 0)
-	{
-		perror("com set error!\n");
-		return 0;
-	}
-	return 1;
 }
+
+int HC_serial::setLinuxOtherBaud(int fd,int iBauds){	int status;	struct termios options;	struct serial_struct Serial;	tcgetattr(fd, &options); /*Get current options*/	tcflush(fd, TCIOFLUSH);/*Flush the buffer*/	cfsetispeed(&options, B38400);/*Set input speed,38400 is necessary? who can tell me why?*/	cfsetospeed(&options, 38400); /*Set output speed*/	tcflush(fd, TCIOFLUSH); /*Flush the buffer*/	status = tcsetattr(fd, TCSANOW, &options);	/*Set the 38400 Options*/	if (status != 0)	{		LOG_ERROR("tcsetattr fd1");		return -4;	}	if ((ioctl(fd, TIOCGSERIAL, &Serial)) < 0)/*Get configurations vim IOCTL*/	{		LOG_ERROR("Fail to get Serial!\n");		return -4;	}	Serial.flags = ASYNC_SPD_CUST;/*We will use custom buad,May be standard,may be not */	Serial.custom_divisor = Serial.baud_base / iBauds;/*In Sep4020,baud_base=sysclk/16*/	LOG_INFO("divisor is %x\n", Serial.custom_divisor);	if ((ioctl(fd, TIOCSSERIAL, &Serial)) < 0)/*Set it*/	{		LOG_ERROR("Fail to set Serial\n");		return -4;	}	ioctl(fd, TIOCGSERIAL, &Serial);/*Get it again,not necessary.*/	LOG_INFO("\nBAUD: success set baud to %d,custom_divisor=%d,baud_base=%d\n", iBauds, Serial.custom_divisor, Serial.baud_base);		options.c_cflag &= ~PARENB;
+	options.c_cflag &= ~CSTOPB;
+	options.c_cflag &= ~CSIZE;
+	options.c_cflag |= CS8;
+	options.c_cflag |= (CLOCAL | CREAD);
+	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+	options.c_iflag &= ~(IXON | IXOFF | IXANY);
+	options.c_oflag &= ~OPOST;
+	tcsetattr(m_fd, TCSANOW, &options);	return 0;}
+
 #endif
 /*!
 \brief Close the connection with the current device
@@ -395,8 +428,10 @@ int HC_serial::readData( unsigned char *Buffer, unsigned int expectedBytes,int i
     return dwBytesRead;
     #endif
 
-    #ifdef __linux__
+ #ifdef __linux__
     
+
+#if UART_RX_POLL_MODE
     int nfds;
     int nread = 0 ;
     
@@ -413,7 +448,6 @@ int HC_serial::readData( unsigned char *Buffer, unsigned int expectedBytes,int i
 
     if(nfds == 0) 
     {
-        //printf("timeout!\r\n");
         return 0;
     }
     else
@@ -421,9 +455,46 @@ int HC_serial::readData( unsigned char *Buffer, unsigned int expectedBytes,int i
         nread = read(m_fd , Buffer, expectedBytes);//即使不满desire_get_len，也会返回实际读取到的数据量
         return nread;
     }
+#else
+	std::lock_guard<std::mutex> lock(g_mtxBuff);
+
+	int iSize = g_lstRx.size();
+	//LOG_WARNING("Read data size=%d\n", iSize);
+	if (iSize == 0)
+	{
+		return 0;
+	}
+	if (expectedBytes >= iSize)
+	{
+		for (int i = 0; i < iSize; i++)
+		{
+			Buffer[i] = g_lstRx.at(i);
+		}
+
+		std::vector<UCHAR> lstTmp;
+		lstTmp.swap(g_lstRx);
+
+		return iSize;
+	}
+	else
+	{
+		for (int i = 0; i < expectedBytes; i++)
+		{
+			Buffer[i] = g_lstRx.at(i);
+		}
+		HCHead::eraseBuff(g_lstRx, expectedBytes);
+
+		return expectedBytes;
+	}
+	
+
+#endif
     
-    #endif
+ #endif
 }
+
+
+
 
 int HC_serial::readChar(unsigned char *pByte, unsigned int TimeOut_ms)
 {

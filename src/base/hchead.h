@@ -46,7 +46,6 @@
 
 #define  PI_HC                          3.141592653589793
 
-//#define  PACKAGESIZE                    128
 #define  READ_BUFF_SIZE                 256
 #define  READ_TIMEOUT_MS                10
 #define  DEFAULT_ID_LEN                 14
@@ -67,12 +66,12 @@
 #define  MSG_POINTCLOUD                 3
 
 #define  FPS_1800_NOR                   1800
-#define  FPS_2000_NOR                   2104 //2088  // 2100
-#define  FPS_3000_NOR                   3084 //3012  
+#define  FPS_2000_NOR                   2088 //2088  // 2100
+#define  FPS_3000_NOR                   3048 //3012 
 #define  FPS_TOF_NOR                    3300
 #define  FPS_1800_RANGE                 50
-#define  FPS_2000_RANGE                 50
-#define  FPS_3000_RANGE                 50
+#define  FPS_2000_RANGE                 100
+#define  FPS_3000_RANGE                 100
 #define  FPS_TOF_RANGE                  200
 #define  FPS_1800_MAX                   (FPS_1800_NOR+FPS_1800_RANGE)
 #define  FPS_1800_MIN                   (FPS_1800_NOR-FPS_1800_RANGE)
@@ -84,12 +83,14 @@
 #define  FPS_TOF_MIN                    (FPS_TOF_NOR-FPS_TOF_RANGE)
 
 #define  ANGLE_RESOLV_1800              1.09
-#define  ANGLE_RESOLV_2000              0.92
-#define  ANGLE_RESOLV_3000              0.75
+#define  ANGLE_RESOLV_2000              0.92  //0.92
+#define  ANGLE_RESOLV_3000              0.72 //0.75
+#define  ANGLE_RESOLV_TOF               0.7
 
 #define  CICRLE_MAX_1800                370
 #define  CICRLE_MAX_2000                415  // 5.2hz
 #define  CICRLE_MAX_3000                515  // 6hz
+#define  CICRLE_MAX_TOF                 550  // 6hz
 
 #define  SPEED_300_NOR                  300
 #define  SPEED_312_NOR                  312

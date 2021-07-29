@@ -245,7 +245,7 @@ private:
     int                      m_iFPSMin = 2050;
     int                      m_iSpeedMax = 420;
     int                      m_iSpeedMin = 300;
-    int                      m_iCircleNumberMAX=415;
+    //int                      m_iCircleNumberMAX=415;
 	double                   m_dAngleStep = 0.9;
 	double                   m_dCirclePoints = 415;
 

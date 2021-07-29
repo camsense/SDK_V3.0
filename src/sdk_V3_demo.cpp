@@ -151,7 +151,7 @@ int main()
 #ifdef _WIN32
 	strPort = "//./com" + std::to_string(iPort);                     // For windows OS
 #else
-	strPort = "/dev/ttyUSB" + std::to_string(iPort);              // For Linux OS
+	strPort = "/dev/ttyAMA" + std::to_string(iPort);              // For Linux OS
 #endif
 
 
@@ -160,7 +160,7 @@ int main()
 	std::string strLidarModel = getLidarModel();
 
 
-	int iReadTimeoutms = 10;//
+	int iReadTimeoutms = 2;//10
 
 	//setSDKFactoryMode();
 	setCircleDataMode();
@@ -179,14 +179,14 @@ int main()
 	setLidarPowerOn(true);
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-	if (!getSDKLidarInfo())
+	/*if (!getSDKLidarInfo())
 	{
 		hcSDKUnInit();
 		printf("Main: No lidar ID, please try again!\n");
 		getchar();
 		exit(0);
 		return 0;
-	}
+	}*/
 	g_strLidarID = getSDKLidarID();
 	
 	
