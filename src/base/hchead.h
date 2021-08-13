@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"3.0.9a"
+#define SDK_VER                    (char*)"3.0.9c"
 
 #define SHARK_ENABLE               0
 
@@ -42,6 +42,7 @@
 #define  X2F                            "X2F"
 #define  X2M                            "X2M"
 #define  X2N                            "X2N"
+#define  X2Y                            "X2Y"
 #define  T1A                            "T1A"
 
 #define  PI_HC                          3.141592653589793
@@ -86,24 +87,36 @@
 #define  ANGLE_RESOLV_2000              0.92  //0.92
 #define  ANGLE_RESOLV_3000              0.72 //0.75
 #define  ANGLE_RESOLV_TOF               0.7
+#define  ANGLE_RESOLV_NARWAL_NOR        0.65 //
+#define  ANGLE_RESOLV_NARWAL_LOW        0.55 //
 
 #define  CICRLE_MAX_1800                370
 #define  CICRLE_MAX_2000                415  // 5.2hz
 #define  CICRLE_MAX_3000                515  // 6hz
 #define  CICRLE_MAX_TOF                 550  // 6hz
+#define  CICRLE_MAX_NARWAL_NOR          585  // 5.3hz  571
+#define  CICRLE_MAX_NARWAL_LOW          760  // 4.2hz   727
 
+#define  SPEED_250_NOR                  250
 #define  SPEED_300_NOR                  300
 #define  SPEED_312_NOR                  312
+#define  SPEED_315_NOR                  315
 #define  SPEED_360_NOR                  360
 #define  SPEED_TOF_NOR                  360
+#define  SPEED_250_RANGE                10
 #define  SPEED_300_RANGE                10
 #define  SPEED_312_RANGE                6
+#define  SPEED_315_RANGE                10
 #define  SPEED_360_RANGE                10
 #define  SPEED_TOF_RANGE                10
+#define  SPEED_250_MAX                  (SPEED_250_NOR+SPEED_250_RANGE)
+#define  SPEED_250_MIN                  (SPEED_250_NOR-SPEED_250_RANGE)
 #define  SPEED_300_MAX                  (SPEED_300_NOR+SPEED_300_RANGE)
 #define  SPEED_300_MIN                  (SPEED_300_NOR-SPEED_300_RANGE)
 #define  SPEED_312_MAX                  (SPEED_312_NOR+SPEED_312_RANGE)
 #define  SPEED_312_MIN                  (SPEED_312_NOR-SPEED_312_RANGE)
+#define  SPEED_315_MAX                  (SPEED_315_NOR+SPEED_315_RANGE)
+#define  SPEED_315_MIN                  (SPEED_315_NOR-SPEED_315_RANGE)
 #define  SPEED_360_MAX                  (SPEED_360_NOR+SPEED_360_RANGE)
 #define  SPEED_360_MIN                  (SPEED_360_NOR-SPEED_360_RANGE)
 #define  SPEED_TOF_MAX                  (SPEED_TOF_NOR+SPEED_TOF_RANGE)
@@ -304,6 +317,7 @@ public:
     HCHead();
 
     static UINT64 getCurrentTimestampUs();
+	static UINT64 getCurrentTimestampMs();
 
     static void eraseBuff(std::vector<UCHAR>& lstG,int iLen);
     static void eraseRangeData(LstPointCloud& lstG,int iLen);

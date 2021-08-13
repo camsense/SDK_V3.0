@@ -65,13 +65,15 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 	char buff[128] = { 0 };
     for(auto sInfo : lstG)
     {
-		memset(buff,0,128);
+		
+		memset(buff, 0, 128);
 		sprintf(buff, "%lld,%0.3f,%0.3f,%d,%d,%d,%d\n",
-			HCHead::getCurrentTimestampUs(), sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist,sInfo.bValid,sInfo.u16Speed,sInfo.u16Gray);
+			HCHead::getCurrentTimestampUs(), sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist, sInfo.bValid, sInfo.u16Speed, sInfo.u16Gray);
 
 		outFile.write(buff, strlen(buff));
 
 		printf(buff);
+		
 
 		
     }
@@ -123,7 +125,7 @@ int main()
 
     int rtn = 0;
 
-    bool bPollMode = true;
+    bool bPollMode = false;
     bool bDistQ2 = false;
     bool bLoop = false;
 
@@ -151,7 +153,7 @@ int main()
 #ifdef _WIN32
 	strPort = "//./com" + std::to_string(iPort);                     // For windows OS
 #else
-	strPort = "/dev/ttyAMA" + std::to_string(iPort);              // For Linux OS
+	strPort = "/dev/ttyUSB" + std::to_string(iPort);              // For Linux OS
 #endif
 
 
@@ -162,8 +164,7 @@ int main()
 
 	int iReadTimeoutms = 2;//10
 
-	//setSDKFactoryMode();
-	setCircleDataMode();
+	setSDKCircleDataMode();
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
 
     if (rtn != 1)
@@ -176,7 +177,7 @@ int main()
         
     }
 
-	setLidarPowerOn(true);
+	setSDKLidarPowerOn(true);
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	/*if (!getSDKLidarInfo())
@@ -225,8 +226,9 @@ int main()
 						printf("Main: ------------------------------Poll Rx Points=%d\n", lstG.size());
 						for (auto sInfo : lstG)
 						{
-							//if(sInfo.dAngle>359 || sInfo.dAngle < 1)
-								//printf("Main: Angle=%0.4f,Raw_Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.dAngleRaw,sInfo.u16Dist);//printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
+							if(sInfo.dAngle>70 && sInfo.dAngle < 110)
+								//printf("Main: Angle=%0.4f,Raw_Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.dAngleRaw,sInfo.u16Dist);//
+							printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
 						}
 					}
 					
@@ -262,13 +264,13 @@ int main()
         int iSDKStatus = getSDKStatus();
 		//printf("Main: SDK Status=%d\n" ,iSDKStatus );
 
-		/*iCount++;
+		iCount++;
 		if (iCount > 300)
 		{
 			iCount = 0;
-			g_strLidarID = getSDKLidarID();
-			printf("Lidar ID=%s\n", g_strLidarID.c_str());
-		}*/
+			//g_strLidarID = getSDKLidarID();
+			//printf("Lidar ID=%s\n", g_strLidarID.c_str());
+		}
 		
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));

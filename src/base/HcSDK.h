@@ -58,13 +58,19 @@ extern "C" {
 	//poll mode,get ScanData
 	bool getSDKScanData(std::list<tsNodeInfo>& dataList, bool bReverse = true);
 
+	//Factory mode for test
 	void setSDKFactoryMode(bool bFactoryMode = true);
 
+	//start the factory mode 
 	bool startSDKFactoryModeRun();
 	
-	void setCircleDataMode();
+	//set one circle data to output 
+	void setSDKCircleDataMode();
 
-	void setLidarPowerOn(bool bPowerOn);
+	//set the lidar status is powered
+	void setSDKLidarPowerOn(bool bPowerOn);
+
+	void setSDKLidarLowSpeed(bool bLow);
 
 #ifdef __cplusplus
 };

@@ -26,7 +26,30 @@
 //
 //typedef std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> MicroClock_type;
 
-
+typedef struct tsLDSAttr
+{
+	double  dAngleOffsetD;
+	double  dBaseline_mm;
+	double  dTheta_d;
+	int     iFPSMax;
+	int     iFPSMin;
+	int     iSpeedMax;
+	int     iSpeedMin;
+	double  dAngleStep;
+	double  dCirclePoints;
+	tsLDSAttr()
+	{
+		dAngleOffsetD = 21;
+		dBaseline_mm = 20;
+		dTheta_d = 10;
+		iFPSMax = FPS_2000_MAX;
+		iFPSMin = FPS_2000_MIN;
+		iSpeedMax = SPEED_312_MAX;
+		iSpeedMin = SPEED_312_MIN;
+		dAngleStep = ANGLE_RESOLV_2000;
+		dCirclePoints = CICRLE_MAX_2000;
+	}
+}tsLDSAttr;
 
 class HCLidar
 {
@@ -146,6 +169,8 @@ public:
 
 	void setLidarPowerOn(bool bPowerOn=true);
 
+	void setLidarLowSpeed(bool bLow=true);
+
 private:
 	
 #if SHARK_ENABLE
@@ -216,6 +241,7 @@ private:
     std::atomic<bool>        m_bGetIDTimeOut;
     std::atomic<bool>        m_bHadFact;
     std::atomic<bool>        m_bGetFactTimeOut;
+	std::atomic<bool>        m_bCheckSpeed;
 
     bool                     m_bHadInfo;
     bool                     m_bX2ID = true;
@@ -229,11 +255,10 @@ private:
     tsSDKStatistic           m_sStatistic;
     std::mutex               m_mtxStatistic;
 
-    double                   m_dAngleOffsetD=21;    
+	 
     bool                     m_bThreadStart;
     bool                     m_bCompensate = true;
-    double                   m_dBaseline_mm=20;
-    double                   m_dTheta_d = 10;
+	tsLDSAttr                m_sAttr;//lidar attribute
 
     std::mutex               m_mtxInit;
     std::condition_variable  m_cvInit;
@@ -241,13 +266,7 @@ private:
     tsSDKPara                m_sSDKPara;
     int                      m_iReadTimeoutCount=0;
 	UINT64                   m_u64StartTimeNoData = 0;
-    int                      m_iFPSMax = 2120;
-    int                      m_iFPSMin = 2050;
-    int                      m_iSpeedMax = 420;
-    int                      m_iSpeedMin = 300;
-    //int                      m_iCircleNumberMAX=415;
-	double                   m_dAngleStep = 0.9;
-	double                   m_dCirclePoints = 415;
+    
 
     int                      m_iInvalidFPSSecond=0;
     UINT64                   m_u64StartTimeLowSpeed=0;
@@ -258,6 +277,8 @@ private:
     UINT64                   m_u64StartTimeInvalidPoints=0;
     int                      m_iValidNumber = 0;
 	UINT64                   m_u64StartTimeFindPackHeader = 0;
+	UINT64                   m_u64StartTimeCheckSpeed = 0;
+	int                      m_iCheckSpeedCount = 0;
 	UINT16                   m_u16Speed = 0;
 	std::map<int, UINT64>    m_mapErrorCode;
 	std::mutex               m_mtxError;
@@ -312,6 +333,7 @@ private:
     void checkHadInitSuccess(bool bTimeout);
 	void checkLDSVoltage();
 	void checkPDCurrent();
+	void checkChangeSpeed();
 
 	void checkFindPackHeader();
 
@@ -332,6 +354,7 @@ private:
 	bool getOneCircleData();
 
 	bool getErrorCode(int iError, int iMs);
+
 
 	//////////////////////////////////////
 	bool rockCheckLDSInfo(UINT8* buffer, unLidarInfo& lds_info);

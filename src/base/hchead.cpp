@@ -25,6 +25,12 @@ UINT64 HCHead::getCurrentTimestampUs()
     return ts;
 }
 
+UINT64 HCHead::getCurrentTimestampMs()
+{
+	
+	return getCurrentTimestampUs() / 1000;
+}
+
 
 void HCHead::eraseBuff(std::vector<UCHAR>& lstG,int iLen)
 {

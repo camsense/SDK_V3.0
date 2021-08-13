@@ -63,6 +63,7 @@ public:
     void closeDevice();
 
     char writeChar(const char Byte);
+	int  writeData2(unsigned char * pData, int iLen);
 
     int readChar(unsigned char *pByte,const unsigned int TimeOut_ms=0);
 

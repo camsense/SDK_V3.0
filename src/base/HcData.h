@@ -63,6 +63,7 @@ typedef struct tsSDKPara
 	int           iPollBuffSize;  //POLL mode ,buff max size
 	int           iCallbackBuffSize; //Callback mode ,buff size
 	int           iCirclesBuffSize;//POLL mode, circle max size
+	int           iChangeSpeedMS; // change speed  duration, ms ,default 2500ms
 
 	tsSDKPara()
 	{
@@ -73,9 +74,10 @@ typedef struct tsSDKPara
 		iCoverContinueMS = 3500;
 		iBlockContinueMS = 3500;
 		iCoverPoints = 100;
-		iPollBuffSize = 3000;
+		iPollBuffSize = 5000;
 		iCallbackBuffSize = 50;
 		iCirclesBuffSize = 3;
+		iChangeSpeedMS = 2500;
 	}
 }tsSDKPara;
 
@@ -133,6 +135,7 @@ enum LiDarErrorCode
 	ERR_LIDAR_SENSOR = -3007,// Lidar sensor error,after powered 5s ,FPS=0 and ERR_LIDAR_FPS_INVALID,and no blocked msg  in a second
 	ERR_LIDAR_VOLTAGE = -3008,// Lidar voltage error, 5s no ID,no dist data
 	ERR_LIDAR_PD_CURRENT = -3009,// Lidar current error, speed ok,FPS ok, no valid pointclouds
+	ERR_LIDAR_CHANGE_SPEED = -3010,// Lidar change speed timeout,
 };
 
 

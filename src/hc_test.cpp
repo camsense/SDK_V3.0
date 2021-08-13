@@ -68,13 +68,17 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 	char buff[128] = { 0 };
     for(auto sInfo : lstG)
     {
-		memset(buff,0,128);
-		sprintf(buff, "%lld,%0.3f,%0.3f,%d,%d,%d,%d\n",
-			HCHead::getCurrentTimestampUs(), sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist,sInfo.bValid,sInfo.u16Speed,sInfo.u16Gray);
+		//if (sInfo.dAngle > 65 && sInfo.dAngle < 115)
+		//if (sInfo.dAngle > 40 && sInfo.dAngle < 160)
+		{
+			memset(buff, 0, 128);
+			sprintf(buff, "%lld,%0.3f,%0.3f,%d,%d,%d,%d\n",
+				HCHead::getCurrentTimestampUs(), sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist, sInfo.bValid, sInfo.u16Speed, sInfo.u16Gray);
 
-		outFile.write(buff, strlen(buff));
+			outFile.write(buff, strlen(buff));
 
-		printf(buff);
+			printf(buff);
+		}
 
 		
     }
@@ -127,7 +131,7 @@ int main()
     //HCLidar& device= HCLidar::getInstance();
     int rtn = 0;
 
-    bool bPollMode = true;
+    bool bPollMode = false;
     bool bDistQ2 = false;
     bool bLoop = false;
 
@@ -167,7 +171,7 @@ int main()
 	int iReadTimeoutms = 10;//
 
 	//setSDKFactoryMode();
-	//setCircleDataMode();
+	setSDKCircleDataMode();
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
 
     if (rtn != 1)

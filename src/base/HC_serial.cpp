@@ -83,7 +83,9 @@ void signal_handler_IO(int status)
 \brief      Constructor of the class HC_serial.
 */
 HC_serial::HC_serial()
-{}
+{
+	hSerial = INVALID_HANDLE_VALUE;
+}
 
 
 /*!
@@ -355,7 +357,40 @@ int HC_serial::setInterruptMode(const char *chPort, const unsigned int iBauds)
 
 }
 
-int HC_serial::setLinuxOtherBaud(int fd,int iBauds){	int status;	struct termios options;	struct serial_struct Serial;	tcgetattr(fd, &options); /*Get current options*/	tcflush(fd, TCIOFLUSH);/*Flush the buffer*/	cfsetispeed(&options, B38400);/*Set input speed,38400 is necessary? who can tell me why?*/	cfsetospeed(&options, 38400); /*Set output speed*/	tcflush(fd, TCIOFLUSH); /*Flush the buffer*/	status = tcsetattr(fd, TCSANOW, &options);	/*Set the 38400 Options*/	if (status != 0)	{		LOG_ERROR("tcsetattr fd1");		return -4;	}	if ((ioctl(fd, TIOCGSERIAL, &Serial)) < 0)/*Get configurations vim IOCTL*/	{		LOG_ERROR("Fail to get Serial!\n");		return -4;	}	Serial.flags = ASYNC_SPD_CUST;/*We will use custom buad,May be standard,may be not */	Serial.custom_divisor = Serial.baud_base / iBauds;/*In Sep4020,baud_base=sysclk/16*/	LOG_INFO("divisor is %x\n", Serial.custom_divisor);	if ((ioctl(fd, TIOCSSERIAL, &Serial)) < 0)/*Set it*/	{		LOG_ERROR("Fail to set Serial\n");		return -4;	}	ioctl(fd, TIOCGSERIAL, &Serial);/*Get it again,not necessary.*/	LOG_INFO("\nBAUD: success set baud to %d,custom_divisor=%d,baud_base=%d\n", iBauds, Serial.custom_divisor, Serial.baud_base);		options.c_cflag &= ~PARENB;
+int HC_serial::setLinuxOtherBaud(int fd,int iBauds)
+{
+	int status;
+	struct termios options;
+	struct serial_struct Serial;
+	tcgetattr(fd, &options); /*Get current options*/
+	tcflush(fd, TCIOFLUSH);/*Flush the buffer*/
+	cfsetispeed(&options, B38400);/*Set input speed,38400 is necessary? who can tell me why?*/
+	cfsetospeed(&options, 38400); /*Set output speed*/
+	tcflush(fd, TCIOFLUSH); /*Flush the buffer*/
+	status = tcsetattr(fd, TCSANOW, &options);
+	/*Set the 38400 Options*/
+	if (status != 0)
+	{
+		LOG_ERROR("tcsetattr fd1");
+		return -4;
+	}
+	if ((ioctl(fd, TIOCGSERIAL, &Serial)) < 0)/*Get configurations vim IOCTL*/
+	{
+		LOG_ERROR("Fail to get Serial!\n");
+		return -4;
+	}
+	Serial.flags = ASYNC_SPD_CUST;/*We will use custom buad,May be standard,may be not */
+	Serial.custom_divisor = Serial.baud_base / iBauds;/*In Sep4020,baud_base=sysclk/16*/
+	LOG_INFO("divisor is %x\n", Serial.custom_divisor);
+	if ((ioctl(fd, TIOCSSERIAL, &Serial)) < 0)/*Set it*/
+	{
+		LOG_ERROR("Fail to set Serial\n");
+		return -4;
+	}
+	ioctl(fd, TIOCGSERIAL, &Serial);/*Get it again,not necessary.*/
+	LOG_INFO("\nBAUD: success set baud to %d,custom_divisor=%d,baud_base=%d\n", iBauds, Serial.custom_divisor, Serial.baud_base);
+	
+	options.c_cflag &= ~PARENB;
 	options.c_cflag &= ~CSTOPB;
 	options.c_cflag &= ~CSIZE;
 	options.c_cflag |= CS8;
@@ -363,7 +398,10 @@ int HC_serial::setLinuxOtherBaud(int fd,int iBauds){	int status;	struct termi
 	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 	options.c_iflag &= ~(IXON | IXOFF | IXANY);
 	options.c_oflag &= ~OPOST;
-	tcsetattr(m_fd, TCSANOW, &options);	return 0;}
+	tcsetattr(m_fd, TCSANOW, &options);
+	return 0;
+}
+
 
 #endif
 /*!
@@ -406,6 +444,33 @@ char HC_serial::writeChar(const char Byte)
 }
 
 
+int HC_serial::writeData2(unsigned char * pData, int iLen)
+{
+#if defined (_WIN32) || defined( _WIN64)
+	if (hSerial == INVALID_HANDLE_VALUE)
+		return 0;
+
+	//清空串口
+	PurgeComm(hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR);
+
+	//写串口
+	DWORD dwWrite = 0;
+	bool bOK = WriteFile(hSerial, pData, iLen, &dwWrite, NULL);
+
+	return dwWrite;
+
+#endif
+#ifdef __linux__
+	if (m_fd == 0)
+		return 0;
+
+	if (write(m_fd, pData, iLen) != iLen)                                           // Write the char
+		return 0;                                                      // Error while writting
+	return iLen;
+
+#endif
+}
+
 int HC_serial::readData( unsigned char *Buffer, unsigned int expectedBytes,int iTimeoutms)
 {
     #if defined (_WIN32) || defined(_WIN64)
@@ -437,6 +502,9 @@ int HC_serial::readData( unsigned char *Buffer, unsigned int expectedBytes,int i
     
     fd_set readfds;
     struct timeval tv;
+
+	if (m_fd == 0)
+		return 0;
 
     tv.tv_sec = 0;
     tv.tv_usec = iTimeoutms*1000;//10ms
