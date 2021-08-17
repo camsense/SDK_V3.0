@@ -125,7 +125,7 @@ int main()
 
     int rtn = 0;
 
-    bool bPollMode = false;
+    bool bPollMode = true;
     bool bDistQ2 = false;
     bool bLoop = false;
 
@@ -226,9 +226,9 @@ int main()
 						printf("Main: ------------------------------Poll Rx Points=%d\n", lstG.size());
 						for (auto sInfo : lstG)
 						{
-							if(sInfo.dAngle>70 && sInfo.dAngle < 110)
+							//if(sInfo.dAngle>70 && sInfo.dAngle < 110)
 								//printf("Main: Angle=%0.4f,Raw_Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.dAngleRaw,sInfo.u16Dist);//
-							printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
+							//printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
 						}
 					}
 					

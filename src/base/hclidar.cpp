@@ -245,6 +245,17 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.dAngleStep = ANGLE_RESOLV_3000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_3000;
     }
+	else if (m_strLidarModel == X2D)
+	{
+		m_sAttr.dAngleOffsetD = 28.5;
+		m_sAttr.dBaseline_mm = 17.92;
+		m_sAttr.iFPSMax = FPS_2000_MAX;
+		m_sAttr.iFPSMin = FPS_2000_MIN;
+		m_sAttr.iSpeedMax = SPEED_312_MAX;
+		m_sAttr.iSpeedMin = SPEED_312_MIN;
+		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
+		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+	}
     else if(m_strLidarModel == X2E)
     {
         m_sAttr.dAngleOffsetD = 28.5;

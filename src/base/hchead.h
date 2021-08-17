@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"3.0.9c"
+#define SDK_VER                    (char*)"3.0.9d"
 
 #define SHARK_ENABLE               0
 
