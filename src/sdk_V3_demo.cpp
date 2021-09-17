@@ -63,26 +63,31 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 	outFile.open(strFile, std::ios::app);
 
 	char buff[128] = { 0 };
+	sprintf(buff, "---------------Size=%d\n", lstG.size());
+	printf(buff);
+
     for(auto sInfo : lstG)
     {
-		
-		memset(buff, 0, 128);
-		sprintf(buff, "%lld,%0.3f,%0.3f,%d,%d,%d,%d\n",
-			HCHead::getCurrentTimestampUs(), sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist, sInfo.bValid, sInfo.u16Speed, sInfo.u16Gray);
+		//if (sInfo.dAngle > 310 || sInfo.dAngle < 50)
+		//{
 
-		outFile.write(buff, strlen(buff));
+			memset(buff, 0, 128);
+			sprintf(buff, "%lld,%0.3f,%0.3f,%d,%d,%d,%d\n",
+				HCHead::getCurrentTimestampUs(), sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist, sInfo.bValid, sInfo.u16Speed, sInfo.u16Gray);
 
-		printf(buff);
-		
+			outFile.write(buff, strlen(buff));
+
+			//printf(buff);
+		//}
 
 		
     }
 		
 	outFile.close();
 
-	sprintf(buff, "---------------------------------------  %d\n",lstG.size());
+	
 
-	printf(buff);
+	
 }
 
 void sdkCallBackFunDistQ2(LstNodeDistQ2 lstG)
@@ -125,7 +130,7 @@ int main()
 
     int rtn = 0;
 
-    bool bPollMode = false;
+    bool bPollMode = true;
     bool bDistQ2 = false;
     bool bLoop = false;
 
@@ -164,7 +169,7 @@ int main()
 
 	int iReadTimeoutms = 2;//10
 
-	setSDKCircleDataMode();
+	//setSDKCircleDataMode();
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
 
     if (rtn != 1)
@@ -223,13 +228,14 @@ int main()
 				{
 					if (lstG.size() > 0)
 					{
-						printf("Main: ------------------------------Poll Rx Points=%d\n", lstG.size());
-						for (auto sInfo : lstG)
-						{
-							if(sInfo.dAngle>70 && sInfo.dAngle < 110)
+						sdkCallBackFunPointCloud(lstG);
+						//printf("Main: ------------------------------Poll Rx Points=%d\n", lstG.size());
+						//for (auto sInfo : lstG)
+						//{
+							//if(sInfo.dAngle>340 || sInfo.dAngle < 20)
 								//printf("Main: Angle=%0.4f,Raw_Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.dAngleRaw,sInfo.u16Dist);//
-							printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
-						}
+							//printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
+						//}
 					}
 					
 				}

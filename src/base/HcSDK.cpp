@@ -145,10 +145,6 @@ void setSDKLidarPowerOn(bool bPowerOn)
 	g_device.setLidarPowerOn(bPowerOn);
 }
 
-void setSDKLidarLowSpeed(bool bLow)
-{
-	g_device.setLidarLowSpeed(bLow);
-}
 
 #ifdef __cplusplus
 };

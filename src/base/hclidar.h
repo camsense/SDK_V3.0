@@ -169,7 +169,6 @@ public:
 
 	void setLidarPowerOn(bool bPowerOn=true);
 
-	void setLidarLowSpeed(bool bLow=true);
 
 private:
 	
@@ -311,17 +310,16 @@ private:
     bool calMCUFrame(char* ch,int iLen);
     bool getDevID(std::vector<UCHAR>& lstBuff);
     bool getStartInfo(std::vector<UCHAR>& lstBuff);
+	bool getNewSNInfo(std::vector<UCHAR>& lstBuff);
     bool getPointCloud(std::vector<UCHAR>& lstBuff);
-	bool getPointCloudTof(std::vector<UCHAR>& lstBuff);
     bool getMCUCmd(std::vector<UCHAR>& lstBuff);
 
     bool parserRangeEX(LstPointCloud &resultRange,const char * chBuff, int iIndex, int in_numData,int iPointSize);
-	bool parserRangeTof(LstPointCloud &resultRange, const char * chBuff, int iIndex, int in_numData, int iPointSize);
 	void compensate(double &angle, UINT16 &dist, const double theta_d, const double baseline_mm);
     bool checkDataCal(std::vector<UCHAR>& lstBuff, int iIndex);
 	bool checkDataCalTof(std::vector<UCHAR>& lstBuff, int iIndex);
     void checkReadPacketData();
-    void sendGetIDInfoSignal(bool bGetID);
+    //void sendGetIDInfoSignal(bool bGetID);
     void sendGetFactoryInfoSignal(bool bGetFact);
 
     void checkInvalidFPS(int iFPS);

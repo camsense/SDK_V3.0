@@ -1,4 +1,3 @@
-Version: 1.8.2
 
 Tutorial:
 1. Compile command (Need compiler which supports C++11)

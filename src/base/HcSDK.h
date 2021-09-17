@@ -70,7 +70,7 @@ extern "C" {
 	//set the lidar status is powered
 	void setSDKLidarPowerOn(bool bPowerOn);
 
-	void setSDKLidarLowSpeed(bool bLow);
+
 
 #ifdef __cplusplus
 };

@@ -290,29 +290,29 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
     }
-	else if (m_strLidarModel == X2Y)
+	else if (m_strLidarModel == D2A)
 	{
-
 		m_sAttr.dAngleOffsetD = 28.5;
-		m_sAttr.dBaseline_mm = 17.92;
+		m_sAttr.dBaseline_mm = 17;
+		m_sAttr.dTheta_d = 0;
+		m_sAttr.iFPSMax = FPS_2000_MAX;
+		m_sAttr.iFPSMin = FPS_2000_MIN;
+		m_sAttr.iSpeedMax = SPEED_312_MAX;
+		m_sAttr.iSpeedMin = SPEED_312_MIN;
+		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
+		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+	}
+	else if (m_strLidarModel == D2B)
+	{
+		m_sAttr.dAngleOffsetD = 28.5;
+		m_sAttr.dBaseline_mm = 17;
+		m_sAttr.dTheta_d = 0;
 		m_sAttr.iFPSMax = FPS_3000_MAX;
 		m_sAttr.iFPSMin = FPS_3000_MIN;
-		m_sAttr.iSpeedMax = SPEED_315_MAX;
-		m_sAttr.iSpeedMin = SPEED_315_MIN;
-		m_sAttr.dAngleStep = ANGLE_RESOLV_NARWAL_NOR;
-		m_sAttr.dCirclePoints = CICRLE_MAX_NARWAL_NOR;
-	}
-	else if (m_strLidarModel == T1A)
-	{
-
-		m_sAttr.dAngleOffsetD = 21;
-		m_sAttr.dBaseline_mm = 20;
-		m_sAttr.iFPSMax = FPS_TOF_MAX;
-		m_sAttr.iFPSMin = FPS_TOF_MIN;
-		m_sAttr.iSpeedMax = SPEED_TOF_MAX;
-		m_sAttr.iSpeedMin = SPEED_TOF_MIN;
-		m_sAttr.dAngleStep = ANGLE_RESOLV_TOF;
-		m_sAttr.dCirclePoints = CICRLE_MAX_TOF;
+		m_sAttr.iSpeedMax = SPEED_360_MAX;
+		m_sAttr.iSpeedMin = SPEED_360_MIN;
+		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
+		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
 	}
     else
     {
@@ -716,6 +716,7 @@ void HCLidar::processMain()
     //printf("Info: buff size = %d\n",m_lstBuff.size());
 }
 
+/*
 void HCLidar::sendGetIDInfoSignal(bool bGetID)
 {
     if(!bGetID)
@@ -726,6 +727,8 @@ void HCLidar::sendGetIDInfoSignal(bool bGetID)
     m_bHadID = bGetID;
     checkHadInitSuccess(false);
 }
+*/
+
 
 void HCLidar::sendGetFactoryInfoSignal(bool bGetFact)
 {
@@ -811,9 +814,17 @@ bool HCLidar::processData()
 						iIndex = i;
 						break;
 					}
+					
 				}
 				if (!m_bHadFact && !m_bGetFactTimeOut)
 				{
+					if ((UCHAR)m_lstBuff.at(i) == 0x5A && (UCHAR)m_lstBuff.at(i + 1) == 0xAA)//SN
+					{
+						iMsgID = MSG_NEW_SN;
+						iIndex = i;
+						break;
+					}
+
 					if ((UCHAR)m_lstBuff.at(i) == 0xA5 && (UCHAR)m_lstBuff.at(i + 1) == 0x5A)//Two CMD
 					{
 						iMsgID = MSG_CMD;
@@ -834,7 +845,7 @@ bool HCLidar::processData()
     }
     if(iIndex < 0)
     {
-        //printf("HCSDK Error: rx data not mes header\n" );
+		//LOG_INFO("HCSDK Error: rx data not mes header\n" );
         m_lstBuff.clear();
 		
 		checkFindPackHeader();
@@ -848,7 +859,7 @@ bool HCLidar::processData()
     if(iIndex>0)
     {
         HCHead::eraseBuff(m_lstBuff,iIndex);
-        //printf("HCSDK Error: find mes header,buff size=%d\n" , m_lstBuff.size());
+		//LOG_INFO("HCSDK Error: find mes header,buff size=%d\n" , m_lstBuff.size());
     }
 
 
@@ -858,12 +869,11 @@ bool HCLidar::processData()
         //break;
     case MSG_CMD:
             return getStartInfo(m_lstBuff);
+	case MSG_NEW_SN:
+		return getNewSNInfo(m_lstBuff);
        // break;
     case MSG_POINTCLOUD:
-		if(m_strLidarModel == T1A)
-            return getPointCloudTof(m_lstBuff);
-		else
-			return getPointCloud(m_lstBuff);
+		return getPointCloud(m_lstBuff);
 
     }
 
@@ -964,7 +974,8 @@ bool HCLidar::getDevID(std::vector<UCHAR>& lstBuff)
 
 
 			LOG_INFO("Get ID ok!\n");
-			sendGetIDInfoSignal(true);
+			//sendGetIDInfoSignal(true);
+			m_bHadID = true;
 			
 			
 			UINT16 u16Temp = ~lds.sAttr.u16AngleOffset + 1;//原码
@@ -1011,7 +1022,6 @@ bool HCLidar::getDevID(std::vector<UCHAR>& lstBuff)
 
             m_strDevID = chTemp;
 
-            //m_bHadID = true;
 
             memset(chTemp,0,128);
             sprintf(chTemp, "00.%02X.%02X.%02X",
@@ -1021,7 +1031,8 @@ bool HCLidar::getDevID(std::vector<UCHAR>& lstBuff)
 
 
 			LOG_INFO("Get ID ok!\n");
-            sendGetIDInfoSignal(true);
+            //sendGetIDInfoSignal(true);
+			m_bHadID = true;
 
         }
         else
@@ -1062,7 +1073,8 @@ bool HCLidar::getDevID(std::vector<UCHAR>& lstBuff)
             m_strDevID = chTemp;
             //m_bHadID = true;
 			LOG_INFO("Get ID ok!\n" );
-            sendGetIDInfoSignal(true);
+            //sendGetIDInfoSignal(true);
+			m_bHadID = true;
 
         }
         else
@@ -1099,79 +1111,164 @@ bool HCLidar::calStartInfo(char* ch,int iLen)
     return (sum_check == sum);
 }
 
+bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
+{
+
+	LOG_INFO("getNewSNInfo!\n");
+
+	if (lstBuff.size() < sizeof(tsSDKSN))
+		return false;
+
+	tsSDKSN sNewInfo;
+	memcpy(&sNewInfo, lstBuff.data(), sizeof(tsSDKSN));
+
+	if (calStartInfo((char*)lstBuff.data(), sizeof(tsSDKSN)))
+	{
+		HCHead::eraseBuff(lstBuff, sizeof(tsSDKSN));
+
+		char chTemp[128] = { 0 };
+		sprintf(chTemp, "%c%c",
+			sNewInfo.u8FacInfo[0], sNewInfo.u8FacInfo[1]);
+		m_strFactoryInfo = chTemp;
+
+		memset(chTemp, 0, 128);
+		sprintf(chTemp, "%c%d%c", sNewInfo.u8FacInfo[2], sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4]);
+		std::string strModel = chTemp;
+		if (strModel != m_strLidarModel)
+		{
+			LOG_WARNING("Lidar model error init:%s,device:%s\n", (char*)m_strLidarModel.c_str(), (char*)strModel.c_str());
+			//setReadCharsError(ERR_DEV_MODEL);
+			setLidarPara(chTemp);
+		}
+
+		memset(chTemp, 0, 128);
+
+		sprintf(chTemp, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
+			sNewInfo.u8SN[0],
+			sNewInfo.u8SN[1],
+			sNewInfo.u8SN[2],
+			sNewInfo.u8SN[3],
+			sNewInfo.u8SN[4],
+			sNewInfo.u8SN[5],
+			sNewInfo.u8SN[6],
+			sNewInfo.u8SN[7],
+			sNewInfo.u8SN[8],
+			sNewInfo.u8SN[9],
+			sNewInfo.u8SN[10],
+			sNewInfo.u8SN[11],
+			sNewInfo.u8SN[12],
+			sNewInfo.u8SN[13],
+			sNewInfo.u8SN[14],
+			sNewInfo.u8SN[15],
+			sNewInfo.u8SN[16],
+			sNewInfo.u8SN[17], 
+			sNewInfo.u8SN[18], 
+			sNewInfo.u8SN[19] );
+		//sprintf(chTemp, "%s", sNewInfo.u8SN);
+
+		//m_strDevID = chTemp;
+
+		LOG_INFO("Get SN:%s\n", chTemp);
+
+
+		memset(chTemp, 0, 128);
+		sprintf(chTemp, "00.00.%02X.%02X",
+			sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
+
+		m_strFirmwareVer = chTemp;
+
+
+		m_bHadID = true;
+		//sendGetIDInfoSignal(true);
+
+		sendGetFactoryInfoSignal(true);
+		LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
+		return true;
+	}
+	else
+	{
+		HCHead::eraseBuff(lstBuff, sizeof(tsSDKSN));
+
+		LOG_ERROR("New lidar factory info cal error\n");
+		setReadCharsError(ERR_START_INFO);
+		return true;
+
+	}
+    return false;
+}
 bool HCLidar::getStartInfo(std::vector<UCHAR>& lstBuff)
 {
 
 	LOG_INFO("getStartInfo!\n");
 
-    int iLen = sizeof(tsCmdInfo);
-    int iMin =  iLen <lstBuff.size() ? iLen : lstBuff.size();
-    if(lstBuff.size() < sizeof(tsCmdStart))
-        return false;
+	int iLen = sizeof(tsCmdInfo);
+	int iMin = iLen < lstBuff.size() ? iLen : lstBuff.size();
+	if (lstBuff.size() < sizeof(tsCmdStart))
+		return false;
 
-    tsCmdInfo  sCmd;
-    memcpy(&sCmd, lstBuff.data(), iMin);
-    if(sCmd.u16Len == 0)
-    {
+	tsCmdInfo  sCmd;
+	memcpy(&sCmd, lstBuff.data(), iMin);
+	if (sCmd.u16Len == 0)
+	{
 
-        HCHead::eraseBuff(lstBuff,sizeof(tsCmdStart));
+		HCHead::eraseBuff(lstBuff, sizeof(tsCmdStart));
 
 		LOG_ERROR("lidar start message\n");
-        setReadCharsError(ERR_START_INFO);
-        return true;
-    }
+		setReadCharsError(ERR_START_INFO);
+		return true;
+	}
 
-    if(sCmd.u16Len == 20)//old
-    {
-        if(calStartInfo((char*)lstBuff.data(),iLen))
-        {
-            HCHead::eraseBuff(lstBuff,sizeof(tsCmdStart));
+	if (sCmd.u16Len == 20)//old
+	{
+		if (calStartInfo((char*)lstBuff.data(), iLen))
+		{
+			HCHead::eraseBuff(lstBuff, sizeof(tsCmdStart));
 
-            m_strFactoryInfo = std::string((char*)sCmd.u8FacInfo);
+			m_strFactoryInfo = std::string((char*)sCmd.u8FacInfo);
 
 
-            sendGetFactoryInfoSignal(true);
-			LOG_INFO("lidar factory info:%s\n" , (char*)sCmd.u8FacInfo );
-            return true;
-        }
-        else
-        {
-            HCHead::eraseBuff(lstBuff,sizeof(tsCmdStart));
+			sendGetFactoryInfoSignal(true);
+			LOG_INFO("lidar factory info:%s\n", (char*)sCmd.u8FacInfo);
+			return true;
+		}
+		else
+		{
+			HCHead::eraseBuff(lstBuff, sizeof(tsCmdStart));
 
 			LOG_ERROR("lidar start message cal error\n");
-            setReadCharsError(ERR_START_INFO);
-            return true;
+			setReadCharsError(ERR_START_INFO);
+			return true;
 
-        }
-    }
-    else if(sCmd.u16Len == 25)//NEW
-    {
-        if(lstBuff.size() < sizeof(tsSDKIDNew))
-            return false;
+		}
+	}
+	else if (sCmd.u16Len == 25)//NEW
+	{
+		if (lstBuff.size() < sizeof(tsSDKIDNew))
+			return false;
 
 		tsSDKIDNew sNewInfo;
-        memcpy(&sNewInfo, lstBuff.data(), sizeof(tsSDKIDNew));
+		memcpy(&sNewInfo, lstBuff.data(), sizeof(tsSDKIDNew));
 
-        if(calStartInfo((char*)lstBuff.data(),sizeof(tsSDKIDNew)))
-        {
-            HCHead::eraseBuff(lstBuff,sizeof(tsSDKIDNew));
+		if (calStartInfo((char*)lstBuff.data(), sizeof(tsSDKIDNew)))
+		{
+			HCHead::eraseBuff(lstBuff, sizeof(tsSDKIDNew));
 
-            char chTemp[128] = { 0 };
-            sprintf(chTemp, "%c%c",
-                                sNewInfo.u8FacInfo[0], sNewInfo.u8FacInfo[1]);
-            m_strFactoryInfo = chTemp;
+			char chTemp[128] = { 0 };
+			sprintf(chTemp, "%c%c",
+				sNewInfo.u8FacInfo[0], sNewInfo.u8FacInfo[1]);
+			m_strFactoryInfo = chTemp;
 
-            memset(chTemp,0,128);
-            sprintf(chTemp, "%c%d%c",sNewInfo.u8FacInfo[2],sNewInfo.u8FacInfo[3],sNewInfo.u8FacInfo[4]);
-            std::string strModel = chTemp;
-            if(strModel != m_strLidarModel)
-            {
-				LOG_WARNING("Lidar model error init:%s,device:%s\n",(char*)m_strLidarModel.c_str(),  (char*)strModel.c_str() );
-                //setReadCharsError(ERR_DEV_MODEL);
+			memset(chTemp, 0, 128);
+			sprintf(chTemp, "%c%d%c", sNewInfo.u8FacInfo[2], sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4]);
+			std::string strModel = chTemp;
+			if (strModel != m_strLidarModel)
+			{
+				LOG_WARNING("Lidar model error init:%s,device:%s\n", (char*)m_strLidarModel.c_str(), (char*)strModel.c_str());
+				//setReadCharsError(ERR_DEV_MODEL);
 				setLidarPara(chTemp);
-            }
+			}
 
-            memset(chTemp,0,128);
+			memset(chTemp, 0, 128);
 
 			if (m_strLidarModel == X2N)
 			{
@@ -1185,54 +1282,53 @@ bool HCLidar::getStartInfo(std::vector<UCHAR>& lstBuff)
 					sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4], sNewInfo.u8FacInfo[5],
 					sNewInfo.u8ID[0], sNewInfo.u8ID[1], sNewInfo.u8ID[2], sNewInfo.u8ID[3]);
 			}
-						
-
-            m_strDevID = chTemp;
-
-			LOG_INFO("Get ID ok ID:%s\n",chTemp );
 
 
-            memset(chTemp,0,128);
-            sprintf(chTemp, "00.00.%02X.%02X",
-                                sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
+			m_strDevID = chTemp;
 
-            m_strFirmwareVer = chTemp;
+			LOG_INFO("Get ID ok ID:%s\n", chTemp);
 
 
-            memset(chTemp,0,128);
-            sprintf(chTemp, "00.%02X.%02X.%02X",
-                                sNewInfo.u8HardVer[0], sNewInfo.u8HardVer[1], sNewInfo.u8HardVer[2]);
+			memset(chTemp, 0, 128);
+			sprintf(chTemp, "00.00.%02X.%02X",
+				sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
 
-            m_strHardwareVer = chTemp;
+			m_strFirmwareVer = chTemp;
 
 
-            sendGetIDInfoSignal(true);
+			memset(chTemp, 0, 128);
+			sprintf(chTemp, "00.%02X.%02X.%02X",
+				sNewInfo.u8HardVer[0], sNewInfo.u8HardVer[1], sNewInfo.u8HardVer[2]);
 
-            sendGetFactoryInfoSignal(true);
-			LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n" , (char*)m_strFactoryInfo.c_str() , (char*)m_strHardwareVer.c_str());
-            return true;
-        }
-        else
-        {
-            HCHead::eraseBuff(lstBuff,sizeof(tsSDKIDNew));
+			m_strHardwareVer = chTemp;
 
-			LOG_ERROR("New lidar factory info cal error\n" );
-            setReadCharsError(ERR_START_INFO);
-            return true;
+			m_bHadID = true;
+			//sendGetIDInfoSignal(true);
 
-        }
-    }
-    else
-    {
-        HCHead::eraseBuff(lstBuff,sizeof(tsCmdStart));
+			sendGetFactoryInfoSignal(true);
+			LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
+			return true;
+		}
+		else
+		{
+			HCHead::eraseBuff(lstBuff, sizeof(tsSDKIDNew));
 
-		LOG_ERROR("lidar start message\n" );
-        setReadCharsError(ERR_START_INFO);
-        return true;
-    }
-    return false;
+			LOG_ERROR("New lidar factory info cal error\n");
+			setReadCharsError(ERR_START_INFO);
+			return true;
+
+		}
+	}
+	else
+	{
+		HCHead::eraseBuff(lstBuff, sizeof(tsCmdStart));
+
+		LOG_ERROR("lidar start message\n");
+		setReadCharsError(ERR_START_INFO);
+		return true;
+	}
+	return false;
 }
-
 bool HCLidar::calMCUFrame(char* ch,int iLen)
 {
     UINT iSUM = 0;
@@ -1287,78 +1383,7 @@ bool HCLidar::getMCUCmd(std::vector<UCHAR>& lstBuff)
         return false;
     }
 }
-bool HCLidar::getPointCloudTof(std::vector<UCHAR>& lstBuff)
-{
 
-    //printf("Info: getPointCloudTof!\n");
-
-    int iLen = sizeof(tsPointCloudHeadTof);
-    int iMin =  iLen <lstBuff.size() ? iLen : lstBuff.size();
-    if(lstBuff.size() < iLen)
-        return false;
-
-	tsPointCloudHeadTof  sPointCloudHead;
-    memcpy(&sPointCloudHead, lstBuff.data(), iMin);
-
-    int iPointBytes = 3;
-	m_sStatistic.iGrayBytes = 1;
-    if(sPointCloudHead.u8Info & 0x08)
-    {
-        m_sStatistic.iGrayBytes = 2;
-        iPointBytes = 4;
-    }
-	
-
-    int iPackLen = sPointCloudHead.u8Num * iPointBytes + sizeof(tsPointCloudHeadTof) + sizeof(tsPointCloudTailTof);
-
-    if(iPackLen <= lstBuff.size())//have a good packet
-    {
-        /*if(m_sStatistic.u64TSRxPacketFirst==0)
-        {
-
-            m_sStatistic.u64TSRxPacketFirst = HCHead::getCurrentTimestampUs();
-            m_u64StartMS = m_sStatistic.u64TSRxPacketFirst;
-
-        }*/
-        if(checkDataCalTof(lstBuff, iPackLen))//good packet
-        {
-			m_sStatistic.iErrorCountContinue=0;
-            m_sStatistic.u64RxPacketCount++;
-            m_sStatistic.iNumPerPacket = sPointCloudHead.u8Num ;
-
-
-            if(m_bPollMode)
-            {
-                std::lock_guard<std::mutex> lock(m_mtxData);
-				parserRangeTof(m_resultRange,(char *)lstBuff.data(), iPackLen, sPointCloudHead.u8Num,iPointBytes);
-				pollModePointCloud();
-
-            }
-            else//call back mode
-            {
-				parserRangeTof(m_resultRange,(char *)lstBuff.data(), iPackLen, sPointCloudHead.u8Num,iPointBytes);
-				callBackFunPointCloud();
-            }
-
-			//LOG_INFO("lidar point cal ok! Point cloud buff size=%d\n" ,m_resultRange.size() );
-        }
-        else
-        {
-			m_sStatistic.iErrorCountContinue++;
-			LOG_ERROR("lidar point cloud error!\n");
-            m_sStatistic.u64ErrorPacketCount++;
-            setReadCharsError(ERR_CHECKDATA_INVALID);
-
-        }
-        m_sStatistic.iPacketPerSecond++;
-
-        HCHead::eraseBuff(lstBuff,iPackLen);
-
-        return true;
-    }
-    return false;
-
-}
 bool HCLidar::getPointCloud(std::vector<UCHAR>& lstBuff)
 {
 
@@ -1451,121 +1476,7 @@ bool HCLidar::getPointCloud(std::vector<UCHAR>& lstBuff)
 
 }
 
-bool HCLidar::parserRangeTof(LstPointCloud &resultRange,const char * chBuff, int iIndex, int in_numData,int iPointSize)
-{
 
-    UINT64 u64TsUS = HCHead::getCurrentTimestampUs()/1000;
-
-    const int data_size = iPointSize;//const int data_size = 3;
-    int id_start = 6;
-    double FA = ((UCHAR)chBuff[id_start + 1] - 0xA0 + (UCHAR)chBuff[id_start] / 256.0) * 4;
-    double LA = ((UCHAR)chBuff[id_start + 3] - 0xA0 + (UCHAR)chBuff[id_start+2] / 256.0) * 4;
-    if (LA < FA) { LA += 360; }
-    double dAngle = (LA - FA) / (in_numData - 1);        // angle info for each sampling
-
-	//0-11bit temperature 12-15 reserve
-	int iTemperature = ((UCHAR)chBuff[id_start + 4] | ((UCHAR)chBuff[id_start + 5] & 0x07) << 8);
-
-	if (((UCHAR)chBuff[id_start + 5] & 0x08) != 0)
-	{
-		iTemperature = iTemperature ^ 0x07ff;
-		iTemperature = iTemperature + 1;
-		iTemperature = -iTemperature;
-
-	}
-
-	float fTemperature = iTemperature / 16.0f;
-
-
-    UCHAR *data = new UCHAR[data_size];//unsigned char data[3];
-    int pre_bytes = 12;          // 4 bytes before sampling data in each data package
-    unsigned int speed = ((UCHAR)chBuff[5] << 8 | (UCHAR)chBuff[4]) / 64;
-	m_lstSpeed.push_back(speed);
-
-    const double angle_offset = m_sAttr.dAngleOffsetD;
-	//float mAlg = 10.4;
-	//float dAlg = 1;
-    for (int i = 0; i < in_numData; ++i)
-    {
-        double Beforecompensation = FA + dAngle * i;
-		double angle_cur = FA + dAngle * i;// +angle_offset;
-        double Aftercompensation = angle_cur;
-        if (angle_cur > 360)
-        {
-            angle_cur -= 360;
-        }
-
-
-        tsPointCloud sData;
-		sData.fTemperature = fTemperature;
-        sData.u64TimeStampMs = u64TsUS;
-        memcpy(data, (UCHAR*)chBuff + pre_bytes + i * data_size, sizeof(UCHAR) * data_size);
-
-		sData.bValid = true;
-        if((data[1] & 0x80)>0)
-            sData.bValid = false;
-
-			
-
-        sData.u16DistRaw = ((data[1] & 0x003F) << 8) | data[0];
-        sData.u16Dist = sData.u16DistRaw;
-        
-		if(data_size == 3)
-            sData.u16Gray = data[2] & 0xff;
-        else if (data_size == 4)
-        {
-            sData.bGrayTwoByte = true;
-            sData.u16Gray =  ((data[3]&0x00ff) << 8) | data[2] ;
-        }
-        else
-            sData.u16Gray = 0;
-
-        sData.u16Speed = speed;
-        sData.dAngleRaw = angle_cur;
-        sData.dAngle = sData.dAngleRaw;
-        sData.dAngleDisp = sData.dAngle;
-        // Compensate angle & dist
-
-
-        //if (0 == sData.u16Dist)
-		if(!sData.bValid)
-        {
-            m_sStatistic.iInvalid++;
-
-			
-        }
-        if (sData.bValid)
-        {
-
-            m_sStatistic.iValid++;
-
-			double dA = 11.3 / sData.u16Dist;
-			double dS = dA * dA;
-			double dTemp = ((-0.0465*dS+0.16)*dS - 0.3276)*dS*dA + dA ;
-			sData.dAngle = sData.dAngle - dTemp * 180 / PI_HC ;
-			sData.u16Dist = sqrt(sData.u16Dist * sData.u16Dist  + 127.69);
-			sData.dAngleDisp = sData.dAngle;
-			
-        }
-
-        m_sStatistic.dRMS = speed;
-        resultRange.push_back(sData);
-
-        //std::cout << "Info: Angle=" << sData.dAngle  << ",AngleRaw=" << sData.dAngleRaw << ",Dist=" << sData.u16Dist << std::endl;
-        checkSharkInvalidPoints(sData);
-    }
-    if (data)
-    {
-        delete[] data;
-        data = NULL;
-    }
-
-    checkInvalidLowSpeed(speed);
-    checkInvalidHighSpeed(speed);
-	checkEncoderError(speed);
-
-    return true;
-}
 bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int iIndex, int in_numData, int iPointSize)
 {
 
@@ -2636,43 +2547,6 @@ bool HCLidar::rockCheckCRC(unLidarInfo lds_info)
 	return true;
 }
 
-void HCLidar::setLidarLowSpeed(bool bLow)
-{
-	LOG_INFO("Change speed\n");
-	if (bLow)
-	{
-		if (m_sAttr.dAngleStep != ANGLE_RESOLV_NARWAL_LOW)
-		{
-			m_bCheckSpeed = true;
-			m_u64StartTimeCheckSpeed = HCHead::getCurrentTimestampUs();
-		}
-
-		m_sAttr.iSpeedMax = SPEED_250_MAX;
-		m_sAttr.iSpeedMin = SPEED_250_MIN;
-		m_sAttr.dAngleStep = ANGLE_RESOLV_NARWAL_LOW;
-		m_sAttr.dCirclePoints = CICRLE_MAX_NARWAL_LOW;
-
-		UCHAR u8Temp[5] = {0xAA,0x55,0xF1,0x0E};
-		m_serial.writeData2(u8Temp, 4);
-	}
-	else
-	{
-		if (m_sAttr.dAngleStep != ANGLE_RESOLV_NARWAL_NOR)
-		{
-			m_bCheckSpeed = true;
-			m_u64StartTimeCheckSpeed = HCHead::getCurrentTimestampUs();
-		}
-
-
-		m_sAttr.iSpeedMax = SPEED_315_MAX;
-		m_sAttr.iSpeedMin = SPEED_315_MIN;
-		m_sAttr.dAngleStep = ANGLE_RESOLV_NARWAL_NOR;
-		m_sAttr.dCirclePoints = CICRLE_MAX_NARWAL_NOR;
-
-		UCHAR u8Temp[5] = { 0xAA,0x55,0xF2,0x0D };
-		m_serial.writeData2(u8Temp, 4);
-	}
-}
 
 
 void HCLidar::checkChangeSpeed()

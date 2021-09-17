@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"3.0.9c"
+#define SDK_VER                    (char*)"3.0.9d"
 
 #define SHARK_ENABLE               0
 
@@ -42,8 +42,10 @@
 #define  X2F                            "X2F"
 #define  X2M                            "X2M"
 #define  X2N                            "X2N"
-#define  X2Y                            "X2Y"
-#define  T1A                            "T1A"
+#define  X2YE                           "X2YE"
+#define  D2A                            "D2A"
+#define  D2B                            "D2B"
+
 
 #define  PI_HC                          3.141592653589793
 
@@ -55,6 +57,10 @@
 #define  FACT_NEW_RESERVE_LEN           6
 #define  FACT_NEW_CAL_LEN               2
 #define  FACT_NEW_HARD_LEN              3
+#define  FACT_SPEED_VER_LEN             2
+#define  FACT_OTHER_RESERVE_LEN         2
+#define  FACT_V06_RESERVE_LEN           3
+#define  FACT_SN_LEN                    20
 
 #define  FAC_INFO_LEN                   12
 #define  RESERVER_LEN                   4
@@ -65,6 +71,7 @@
 #define  MSG_ID                         1
 #define  MSG_CMD                        2
 #define  MSG_POINTCLOUD                 3
+#define  MSG_NEW_SN                     4
 
 #define  FPS_1800_NOR                   1800
 #define  FPS_2000_NOR                   2088 //2088  // 2100
@@ -219,6 +226,27 @@ typedef struct tsSDKIDNew
     UCHAR        u8HardVer[FACT_NEW_HARD_LEN];
     UCHAR        u8ID[ID_LEN];
 }tsSDKIDNew;
+
+
+typedef struct tsSDKSN
+{
+	UINT16       u16Head;
+	UINT16       u16Len;
+	UINT16       u16Cal;
+	UCHAR        u8Type;
+	UCHAR        u8Ver;
+	UCHAR        u8FacInfo[5];
+	UCHAR        u8Reserve1[5];
+	UCHAR        u8SpeedInfo[2];
+	UCHAR        u8CalVer[3];
+	UCHAR        u8Reserve2[6];
+	UCHAR        u8HardVer[4];
+	UINT16       u16Ang;
+	UCHAR        u8Direction;
+	UCHAR        u8AngleCorrection;
+	UCHAR        u8Reserve3[4];
+	UCHAR        u8SN[20];
+}tsSDKSN;
 
 typedef struct tsIDX2
 {
