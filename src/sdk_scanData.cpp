@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include <fstream>
+#include "base/hchead.h"
 
 int main(int argc, char **argv)
 {
@@ -24,7 +25,7 @@ int main(int argc, char **argv)
 #endif
 
     Dev device;
-    int rs = device.Initialize(buff, 153600, true);
+    int rs = device.Initialize(buff, 115200, true);
     if (rs != 0)
     {
         printf("Initialize failed.\n");
@@ -47,6 +48,9 @@ int main(int argc, char **argv)
 
     //std::ofstream out1;
     //out1.open("headTailData.csv");
+	int iCoundValid = 0;
+	int iCountInvalid = 0;
+	int iSpeed = 0;
 
     bool isReverse = true;
     while (!isExit)
@@ -100,8 +104,12 @@ int main(int argc, char **argv)
 
         if (dataList.size() < 300)
         {
-            printf("datasize = %d\n", dataList.size());
+            printf("Little datasize = %d\n", dataList.size());
         }
+
+
+		iCoundValid = 0;
+		iCountInvalid = 0;
 
         for (auto it = dataList.begin(); it != dataList.end(); ++it)
         {
@@ -111,8 +119,15 @@ int main(int argc, char **argv)
                 it->isValid,
                 it->syn_quality);
             out.write(buff, strlen(buff));
-        }
 
+			iSpeed = it->speed;
+
+			if (it->isValid==1)
+				iCoundValid++;
+			else
+				iCountInvalid++;
+        }
+		printf("ts=%lld, speed=%d datasize = %d,  Valid=%d,  Invalid=%d\n", HCHead::getCurrentTimestampMs()/1000, iSpeed,dataList.size(), iCoundValid, iCountInvalid);
         out.write("\n", 1);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));

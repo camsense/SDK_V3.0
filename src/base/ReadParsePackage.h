@@ -24,29 +24,29 @@ struct rangedata
         speed(0),
         syn_quality(0) {}
 };
-
-enum LiDarErrorCode
-{
-    LIDAR_SUCCESS = 0,
-    //软件和串口错误码
-    ERR_SERIAL_INVALID_HANDLE = -1001,//串口句柄为空
-    ERR_SERIAL_SETCOMMTIMEOUTS_FAILED = -1002,//设置串口读取超时函数失败
-    ERR_SERIAL_READFILE_FAILED = -1003,//读取串口失败
-    ERR_SERIAL_READFILE_ZERO = -1004,//串口读取到零字节
-    ERR_FIND_HEAD_TIMEOUT = -1005,//查找包头失败
-    ERR_CHECKDATA_INVALID = -1006,//校验和失败
-    ERR_GETPACKAGE_FAILED = -1007,//获取包失败
-    ERR_DATABYTELENGTH_INVALID = -1008,//一个雷达数据的位数异常
-    ERR_RECEIVE_BUFFER_SMALL = -1009,//传入的buffer参数大小太小
-
-    //雷达内部错误码
-    ERR_LIDAR_FPS_INVALID = -3001,//fps异常
-    ERR_LIDAR_SPEED_LOW = -3002,//速度低速
-    ERR_LIDAR_SPEED_HIGH = -3003,//速度高速
-    ERR_LIDAR_NUMBER_INVALID = -3004,//有效点数异常
-	ERR_LIDAR_SAME_ANGLE = -3005, //持续输出同一角度
-
-};
+//
+//enum LiDarErrorCode
+//{
+//    LIDAR_SUCCESS = 0,
+//    //软件和串口错误码
+//    ERR_SERIAL_INVALID_HANDLE = -1001,//串口句柄为空
+//    ERR_SERIAL_SETCOMMTIMEOUTS_FAILED = -1002,//设置串口读取超时函数失败
+//    ERR_SERIAL_READFILE_FAILED = -1003,//读取串口失败
+//    ERR_SERIAL_READFILE_ZERO = -1004,//串口读取到零字节
+//    ERR_FIND_HEAD_TIMEOUT = -1005,//查找包头失败
+//    ERR_CHECKDATA_INVALID = -1006,//校验和失败
+//    ERR_GETPACKAGE_FAILED = -1007,//获取包失败
+//    ERR_DATABYTELENGTH_INVALID = -1008,//一个雷达数据的位数异常
+//    ERR_RECEIVE_BUFFER_SMALL = -1009,//传入的buffer参数大小太小
+//
+//    //雷达内部错误码
+//    ERR_LIDAR_FPS_INVALID = -3001,//fps异常
+//    ERR_LIDAR_SPEED_LOW = -3002,//速度低速
+//    ERR_LIDAR_SPEED_HIGH = -3003,//速度高速
+//    ERR_LIDAR_NUMBER_INVALID = -3004,//有效点数异常
+//	ERR_LIDAR_SAME_ANGLE = -3005, //持续输出同一角度
+//
+//};
 
 class ReadParsePackage
 {

@@ -169,7 +169,7 @@ int main()
 
 	int iReadTimeoutms = 2;//10
 
-	//setSDKCircleDataMode();
+	setSDKCircleDataMode();
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
 
     if (rtn != 1)

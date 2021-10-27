@@ -121,6 +121,7 @@ void Dev::CacheScanData()
             // Compensate angle & dist
             unsigned int dist = dataPack[i].dist;
 
+			node_cur.speed = dataPack[i].speed;
             if (0 != dist && !dataPack[i].flag)//&& !dataPack[i].flag
             {
                 //printf("%.4f\n", atan(dist / m));
@@ -217,7 +218,7 @@ void Dev::GrabScanDataWithLoop(std::list<node_info>& nodeList, node_info* nodebu
     if (!CheckBufferIsSorted(nodebuffer, len))
     {
         //printf("data is not sorted.\n");
-        std::stable_sort(nodebuffer, nodebuffer + len);
+        //std::stable_sort(nodebuffer, nodebuffer + len);
     }
 }
 

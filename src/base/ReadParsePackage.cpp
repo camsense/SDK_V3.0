@@ -1,6 +1,8 @@
 #include "ReadParsePackage.h"
+#include "HcData.h"
 #include <stdio.h>
 #include <chrono>
+
 
 #define CENTER_BASE_ANGLE 28.5  //ÏßÐÔ²¹³¥½Ç¶È
 
