@@ -84,7 +84,9 @@ void signal_handler_IO(int status)
 */
 HC_serial::HC_serial()
 {
+#if defined (_WIN32) || defined( _WIN64)
 	hSerial = INVALID_HANDLE_VALUE;
+#endif
 }
 
 

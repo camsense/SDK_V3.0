@@ -37,6 +37,7 @@ typedef struct tsLDSAttr
 	int     iSpeedMin;
 	double  dAngleStep;
 	double  dCirclePoints;
+	UINT64  u64TSStepNs;
 	tsLDSAttr()
 	{
 		dAngleOffsetD = 21;
@@ -48,6 +49,7 @@ typedef struct tsLDSAttr
 		iSpeedMin = SPEED_312_MIN;
 		dAngleStep = ANGLE_RESOLV_2000;
 		dCirclePoints = CICRLE_MAX_2000;
+		u64TSStepNs = 1e9/FPS_2000_NOR;
 	}
 }tsLDSAttr;
 
@@ -233,6 +235,8 @@ private:
 	LstPointCloud            m_lstCircle;
 	std::vector<LstPointCloud> m_Circles;
 
+	UINT64                   m_u64TSStart = 0;
+	UINT64                   m_u64TSEnd = 0;
 
 	std::atomic<bool>        m_bInitTimeout;
     std::atomic<bool>        m_bDisconnect;
@@ -358,6 +362,8 @@ private:
 	bool rockCheckLDSInfo(UINT8* buffer, unLidarInfo& lds_info);
 	void rockDecodeLDSInfoPacket(UINT8* src, UINT8* dest, int& decode_size);
 	bool rockCheckCRC(unLidarInfo lds_info);
+
+	void resetParam();
 };
 
 #endif // HCLIDAR_H

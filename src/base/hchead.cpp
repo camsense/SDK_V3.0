@@ -18,6 +18,11 @@ HCHead::HCHead()
 
 }
 
+UINT64 HCHead::getCurrentTimestampNs()
+{
+	auto ts = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+	return ts;
+}
 
 UINT64 HCHead::getCurrentTimestampUs()
 {
@@ -28,7 +33,8 @@ UINT64 HCHead::getCurrentTimestampUs()
 UINT64 HCHead::getCurrentTimestampMs()
 {
 	
-	return getCurrentTimestampUs() / 1000;
+	auto ts = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	return ts;
 }
 
 

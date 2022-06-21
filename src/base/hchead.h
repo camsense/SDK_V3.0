@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"3.0.10"
+#define SDK_VER                    (char*)"3.0.12"
 
 #define SHARK_ENABLE               0
 
@@ -45,6 +45,7 @@
 #define  X2YE                           "X2YE"
 #define  D2A                            "D2A"
 #define  D2B                            "D2B"
+#define  D2M8                           "D2M8"
 
 
 #define  PI_HC                          3.141592653589793
@@ -100,7 +101,7 @@
 #define  CICRLE_MAX_1800                370
 #define  CICRLE_MAX_2000                415  // 5.2hz
 #define  CICRLE_MAX_3000                515  // 6hz
-#define  CICRLE_MAX_TOF                 550  // 6hz
+#define  CICRLE_MAX_TOF                 580  // 6hz
 #define  CICRLE_MAX_NARWAL_NOR          585  // 5.3hz  571
 #define  CICRLE_MAX_NARWAL_LOW          760  // 4.2hz   727
 
@@ -344,6 +345,7 @@ class HCHead
 public:
     HCHead();
 
+	static UINT64 getCurrentTimestampNs();
     static UINT64 getCurrentTimestampUs();
 	static UINT64 getCurrentTimestampMs();
 

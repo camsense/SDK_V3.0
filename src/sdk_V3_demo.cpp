@@ -73,7 +73,7 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 
 			memset(buff, 0, 128);
 			sprintf(buff, "%lld,%0.3f,%0.3f,%d,%d,%d,%d\n",
-				HCHead::getCurrentTimestampUs(), sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist, sInfo.bValid, sInfo.u16Speed, sInfo.u16Gray);
+				sInfo.u64TimeStampNs, sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist, sInfo.bValid, sInfo.u16Speed, sInfo.u16Gray);
 
 			outFile.write(buff, strlen(buff));
 
@@ -130,7 +130,7 @@ int main()
 
     int rtn = 0;
 
-    bool bPollMode = true;
+    bool bPollMode = false;
     bool bDistQ2 = false;
     bool bLoop = false;
 
@@ -169,7 +169,7 @@ int main()
 
 	int iReadTimeoutms = 2;//10
 
-	setSDKCircleDataMode();
+	//setSDKCircleDataMode();
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
 
     if (rtn != 1)
@@ -205,7 +205,7 @@ int main()
 	
 
 	int iCount = 0;
-	LidarTest  *lidarTest = nullptr;
+	//LidarTest  *lidarTest = nullptr;
     while (true)
     {
 
@@ -267,27 +267,27 @@ int main()
 				                
             }
         }
-        int iSDKStatus = getSDKStatus();
+        //int iSDKStatus = getSDKStatus();
 		//printf("Main: SDK Status=%d\n" ,iSDKStatus );
 
-		iCount++;
-		if (iCount > 300)
-		{
-			iCount = 0;
-			//g_strLidarID = getSDKLidarID();
-			//printf("Lidar ID=%s\n", g_strLidarID.c_str());
-		}
+		//iCount++;
+		//if (iCount > 300)
+		//{
+		//	iCount = 0;
+		//	//g_strLidarID = getSDKLidarID();
+		//	//printf("Lidar ID=%s\n", g_strLidarID.c_str());
+		//}
 		
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
         std::this_thread::yield();
     }
 
-	if (lidarTest) 
+	/*if (lidarTest) 
 	{
 		delete lidarTest;
 		lidarTest = nullptr;
-	}
+	}*/
 
 	hcSDKUnInit();
     return 0;

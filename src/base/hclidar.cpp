@@ -112,6 +112,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
     }
     else if(m_strLidarModel == X1D)
     {
@@ -123,6 +124,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
     }
     else if(m_strLidarModel == X1E)
     {
@@ -134,6 +136,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
     }
     else if(m_strLidarModel == X1F)
     {
@@ -145,6 +148,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
     }
 	else if (m_strLidarModel == X1G)
 	{
@@ -156,6 +160,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_3000_NOR;
 	}
 	else if (m_strLidarModel == X1K)
 	{
@@ -167,6 +172,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
 	}
 	else if (m_strLidarModel == X1L)
 	{
@@ -178,6 +184,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
 	}
     else if(m_strLidarModel == X1M)
     {
@@ -189,6 +196,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
     }
 	else if (m_strLidarModel == X1N)
 	{
@@ -200,6 +208,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_3000_NOR;
 	}
 	else if (m_strLidarModel == X1S)
 	{
@@ -211,6 +220,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iSpeedMin = SPEED_300_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_1800;
 		m_sAttr.dCirclePoints = CICRLE_MAX_1800;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_1800_NOR;
 	}
     else if(m_strLidarModel == X2A)
     {
@@ -222,6 +232,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_360_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_3000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_3000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_3000_NOR;
     }
     else if(m_strLidarModel == X2B)
     {
@@ -233,6 +244,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
     }
     else if(m_strLidarModel == X2C)
     {
@@ -244,6 +256,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_360_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_3000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_3000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_3000_NOR;
     }
     else if(m_strLidarModel == X2E)
     {
@@ -255,6 +268,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_360_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_3000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_3000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_3000_NOR;
     }
     else if(m_strLidarModel == X2F)
     {
@@ -266,6 +280,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_360_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_3000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_3000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_3000_NOR;
     }
     else if(m_strLidarModel == X2M)
     {
@@ -277,6 +292,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
     }
     else if(m_strLidarModel == X2N)
     {
@@ -289,6 +305,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
         m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
     }
 	else if (m_strLidarModel == D2A)
 	{
@@ -301,6 +318,7 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iSpeedMin = SPEED_312_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
 	}
 	else if (m_strLidarModel == D2B)
 	{
@@ -313,6 +331,20 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iSpeedMin = SPEED_360_MIN;
 		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
 		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_3000_NOR;
+	}
+	else if (m_strLidarModel == D2M8)
+	{
+		m_sAttr.dAngleOffsetD = 28.5;
+		m_sAttr.dBaseline_mm = 17;
+		m_sAttr.dTheta_d = 0;
+		m_sAttr.iFPSMax = FPS_2000_MAX;
+		m_sAttr.iFPSMin = FPS_2000_MIN;
+		m_sAttr.iSpeedMax = SPEED_312_MAX;
+		m_sAttr.iSpeedMin = SPEED_312_MIN;
+		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
+		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
 	}
     else
     {
@@ -358,6 +390,7 @@ BOOL HCLidar::initialize(const char* chPort, const char* chLidarModel,int iBaud,
         setReadCharsError(ERR_MODEL_NOT_EXISTS);
         return false;
     }
+	resetParam();
 
 	m_iBaud = iBaud;
 
@@ -584,6 +617,7 @@ void HCLidar::readData()
 void HCLidar::threadParse()
 {
 
+	m_u64TSEnd = HCHead::getCurrentTimestampNs();
     UINT64 u64Start = HCHead::getCurrentTimestampUs();
 
     while (m_bScanning)
@@ -1480,7 +1514,12 @@ bool HCLidar::getPointCloud(std::vector<UCHAR>& lstBuff)
 bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int iIndex, int in_numData, int iPointSize)
 {
 
-	UINT64 epochTime = HCHead::getCurrentTimestampMs();
+	UINT64 epochTime = HCHead::getCurrentTimestampNs();
+
+	m_u64TSStart = epochTime;
+
+	UINT64 u64Inter = (m_u64TSStart - m_u64TSEnd)/ (in_numData - 1);
+	//LOG_INFO("TS:%lld , %lld\n", u64Inter, m_sAttr.u64TSStepNs);
 
 	const int data_size = iPointSize;//const int data_size = 3;
 	int id_start = 6;//int id_start = 2;
@@ -1508,7 +1547,9 @@ bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int
 
 
 		tsPointCloud sData;
-		sData.u64TimeStampMs = epochTime;
+		sData.u64TimeStampNs = epochTime - u64Inter *(in_numData-i);
+		//LOG_INFO("TS:%lld\n", sData.u64TimeStampNs);
+
 		memcpy(data, (UCHAR*)chBuff + pre_bytes + i * data_size, sizeof(UCHAR) * data_size);
 		if (((data[1] >> 7) & 0x01) == 1)
 			sData.bValid = false;//(data[1] >> 7) & 0x01;
@@ -1561,17 +1602,19 @@ bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int
 	checkInvalidHighSpeed(speed);
 	checkEncoderError(speed);
 
+	m_u64TSEnd = HCHead::getCurrentTimestampNs();
+
 	return true;
 }
 void HCLidar::compensate(double &angle, UINT16 &dist, const double theta_d, const double baseline_mm)
 {
     if (0 != dist)
     {
-        /*const double theta = theta_d / 180. * PI_HC;
+        const double theta = theta_d / 180. * PI_HC;
         const double beta = atan(dist / baseline_mm);
         double angle_correct = PI_HC / 2. - (theta + beta);
-        angle = angle + angle_correct / PI_HC * 180;*/
-        angle = angle + 80 - atan(dist / baseline_mm)/ PI_HC * 180;
+        angle = angle + angle_correct / PI_HC * 180;
+        //angle = angle + 80 - atan(dist / baseline_mm)/ PI_HC * 180;
         if (angle > 360)
         {
             angle -= 360;
@@ -2446,7 +2489,7 @@ bool HCLidar::getOneCircleData()
 
 	if (bHadOne)
 	{
-		std::stable_sort(m_lstCircle.begin(), m_lstCircle.end(), newComparator);		
+		//std::stable_sort(m_lstCircle.begin(), m_lstCircle.end(), newComparator);		
 	}
 	else
 	{
@@ -2580,4 +2623,18 @@ void HCLidar::checkChangeSpeed()
 		m_u64StartTimeCheckSpeed = 0;
 	}
 
+}
+
+void HCLidar::resetParam()
+{
+	LOG_INFO("resetParam\n");
+	m_iInvalidFPSSecond = 0;
+	m_u64StartTimeLowSpeed = 0;
+	m_u64StartTimeHighSpeed = 0;
+	m_u64StartTimeSharkBlock = 0;
+	m_iSharkBlockCount = 0;
+	m_u64StartTimeInvalidPoints = 0;
+	m_iValidNumber = 0;
+
+	m_iLastErrorCode = 0;
 }
