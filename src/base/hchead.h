@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"3.0.12"
+#define SDK_VER                    (char*)"3.0.13"
 
 #define SHARK_ENABLE               0
 
@@ -42,11 +42,28 @@
 #define  X2F                            "X2F"
 #define  X2M                            "X2M"
 #define  X2N                            "X2N"
+#define  X2BF                           "X2BF"//speed 6Hz/3Hz
+#define  X2BZ                           "X2BZ"
+#define  X2B2                           "X2B2"
+#define  X2DE                           "X2DE"
+#define  X2MF                           "X2MF"//speed 6Hz/3Hz
+#define  X2MX                           "X2MX"
+#define  X2MM                           "X2MM"
+//#define  X2YJ                           "X2YJ"
+//#define  X2YP                           "X2YP"
 #define  X2YE                           "X2YE"
+
 #define  D2A                            "D2A"
 #define  D2B                            "D2B"
 #define  D2M8                           "D2M8"
-
+#define  D2A8                           "D2A8"
+#define  D2B8                           "D2B8"
+#define  D2S8                           "D2S8"
+#define  D2SA                           "D2SA"
+#define  D2P8                           "D2P8"
+#define  D2PD                           "D2PD"
+#define  D2M1                           "D2M1"
+#define  D2AE                           "D2AE"
 
 #define  PI_HC                          3.141592653589793
 
@@ -93,18 +110,26 @@
 
 #define  ANGLE_RESOLV_1800              1.09
 #define  ANGLE_RESOLV_2000              0.92  //0.92
+#define  ANGLE_RESOLV_2000_6HZ          1.05 
 #define  ANGLE_RESOLV_3000              0.72 //0.75
 #define  ANGLE_RESOLV_TOF               0.7
 #define  ANGLE_RESOLV_NARWAL_NOR        0.65 //
 #define  ANGLE_RESOLV_NARWAL_LOW        0.55 //
 
+#define  ANGLE_RESOLV_2000_3HZ          0.52  
+#define  ANGLE_RESOLV_3000_3HZ          0.36
+
 #define  CICRLE_MAX_1800                370
 #define  CICRLE_MAX_2000                415  // 5.2hz
+#define  CICRLE_MAX_2000_6HZ            360  // 6hz
 #define  CICRLE_MAX_3000                515  // 6hz
 #define  CICRLE_MAX_TOF                 580  // 6hz
 #define  CICRLE_MAX_NARWAL_NOR          585  // 5.3hz  571
 #define  CICRLE_MAX_NARWAL_LOW          760  // 4.2hz   727
+#define  CICRLE_MAX_2000_3HZ            700  // 3hz
+#define  CICRLE_MAX_3000_3HZ            1015  // 3hz
 
+#define  SPEED_180_NOR                  180
 #define  SPEED_250_NOR                  250
 #define  SPEED_300_NOR                  300
 #define  SPEED_312_NOR                  312
@@ -117,6 +142,8 @@
 #define  SPEED_315_RANGE                10
 #define  SPEED_360_RANGE                10
 #define  SPEED_TOF_RANGE                10
+#define  SPEED_180_MAX                  (SPEED_180_NOR+SPEED_250_RANGE)
+#define  SPEED_180_MIN                  (SPEED_180_NOR-SPEED_250_RANGE)
 #define  SPEED_250_MAX                  (SPEED_250_NOR+SPEED_250_RANGE)
 #define  SPEED_250_MIN                  (SPEED_250_NOR-SPEED_250_RANGE)
 #define  SPEED_300_MAX                  (SPEED_300_NOR+SPEED_300_RANGE)

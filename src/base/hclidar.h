@@ -171,7 +171,7 @@ public:
 
 	void setLidarPowerOn(bool bPowerOn=true);
 
-
+	void setLidarLowSpeed(bool bLow = true);
 private:
 	
 #if SHARK_ENABLE
