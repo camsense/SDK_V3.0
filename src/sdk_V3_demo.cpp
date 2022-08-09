@@ -169,7 +169,7 @@ int main()
 
 	int iReadTimeoutms = 2;//10
 
-	//setSDKCircleDataMode();
+	setSDKCircleDataMode();
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
 
     if (rtn != 1)
@@ -279,7 +279,7 @@ int main()
 		//}
 		
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         std::this_thread::yield();
     }
 

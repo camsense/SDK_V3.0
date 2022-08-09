@@ -193,6 +193,7 @@ typedef struct tsPointCloud
 	UINT64       u64TimeStampMs;    // timestamp ,ms  
 	UINT64       u64TimeStampNs;    // timestamp ,ns  
 	float        fTemperature;//ÎÂ¶È
+	bool         bOverRange;
 	tsPointCloud() :
 		bValid(true),
 		dAngle(0.),
@@ -205,7 +206,8 @@ typedef struct tsPointCloud
 		bGrayTwoByte(false),
 		u64TimeStampMs(0),
 		u64TimeStampNs(0),
-		fTemperature(0)
+		fTemperature(0),
+		bOverRange(false)
 	{}
 }tsPointCloud;
 typedef std::vector<tsPointCloud> LstPointCloud;
