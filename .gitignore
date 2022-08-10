@@ -2,4 +2,4 @@
 build/
 build_win32/
 .vs/
-
+bin/
