@@ -38,6 +38,10 @@ typedef struct tsLDSAttr
 	double  dAngleStep;
 	double  dCirclePoints;
 	UINT64  u64TSStepNs;
+	bool    bBlockSpeed;
+	bool    bAngOffset;
+	int     iFPSNor;
+	int     iSpeedNor;
 	tsLDSAttr()
 	{
 		dAngleOffsetD = 21;
@@ -50,6 +54,10 @@ typedef struct tsLDSAttr
 		dAngleStep = ANGLE_RESOLV_2000;
 		dCirclePoints = CICRLE_MAX_2000;
 		u64TSStepNs = 1e9/FPS_2000_NOR;
+		bBlockSpeed = true;
+		bAngOffset = false;
+		iFPSNor = FPS_2000_NOR;
+		iSpeedNor = SPEED_312_NOR;
 	}
 }tsLDSAttr;
 
@@ -169,6 +177,17 @@ public:
 		m_bCircle = true;
 	}
 
+	void setAngOffset(bool bSetAngOffset)
+	{
+		m_bSetAngOffset = bSetAngOffset;
+	}
+
+	//void setFilter(bool bfilter)
+	//{
+	//	m_bFilter = bfilter;
+	//}
+
+
 	void setLidarPowerOn(bool bPowerOn=true);
 
 	void setLidarLowSpeed(bool bLow = true);
@@ -282,9 +301,15 @@ private:
 	UINT64                   m_u64StartTimeFindPackHeader = 0;
 	UINT64                   m_u64StartTimeCheckSpeed = 0;
 	int                      m_iCheckSpeedCount = 0;
+	UINT64					 m_u64checkBlockSpeed = 0;
 	UINT16                   m_u16Speed = 0;
 	std::map<int, UINT64>    m_mapErrorCode;
 	std::mutex               m_mtxError;
+
+	bool                     m_bSetAngOffset = false;
+	double                   m_dAngOffset = 0;
+	//bool                     m_bFilter = false;
+
 
 	UINT64                   m_u64CountS = 0;
     UINT64                   m_u64StartMS = 0;
@@ -338,6 +363,8 @@ private:
 	void checkChangeSpeed();
 
 	void checkFindPackHeader();
+
+	void checkBlockSpeed(UINT16 u16speed);
 
     void grabScanDataWithLoop(std::list<tsNodeInfo>& nodeList, tsNodeInfo* nodebuffer, size_t buffLen);
     void pushValidData2Buffer(tsNodeInfo& nodeInfo, int index, tsNodeInfo* nodebuffer, int len);

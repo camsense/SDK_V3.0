@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"3.0.14"
+#define SDK_VER                    (char*)"V3.2.18"
 
 #define SHARK_ENABLE               0
 
@@ -113,17 +113,19 @@
 #define  ANGLE_RESOLV_1800              1.09
 #define  ANGLE_RESOLV_2000              0.92  //0.92
 #define  ANGLE_RESOLV_2000_6HZ          1.05 
-#define  ANGLE_RESOLV_3000              0.72 //0.75
+#define  ANGLE_RESOLV_3000              0.72 //0.75 6HZ
 #define  ANGLE_RESOLV_TOF               0.7
 #define  ANGLE_RESOLV_NARWAL_NOR        0.65 //
 #define  ANGLE_RESOLV_NARWAL_LOW        0.55 //
 
 #define  ANGLE_RESOLV_2000_3HZ          0.52  
 #define  ANGLE_RESOLV_3000_3HZ          0.36
+#define  ANGLE_RESOLV_3000_52HZ         0.65 //0.62
 
 #define  CICRLE_MAX_1800                370
 #define  CICRLE_MAX_2000                415  // 5.2hz
 #define  CICRLE_MAX_2000_6HZ            360  // 6hz
+#define  CICRLE_MAX_3000_52HZ           592  // 5.2hz
 #define  CICRLE_MAX_3000                515  // 6hz
 #define  CICRLE_MAX_TOF                 580  // 6hz
 #define  CICRLE_MAX_NARWAL_NOR          585  // 5.3hz  571

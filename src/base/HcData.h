@@ -64,6 +64,7 @@ typedef struct tsSDKPara
 	int           iCallbackBuffSize; //Callback mode ,buff size
 	int           iCirclesBuffSize;//POLL mode, circle max size
 	int           iChangeSpeedMS; // change speed  duration, ms ,default 2500ms
+	int           iMinBlockSpeed;  // min block speed
 
 	tsSDKPara()
 	{
@@ -78,6 +79,7 @@ typedef struct tsSDKPara
 		iCallbackBuffSize = 50;
 		iCirclesBuffSize = 3;
 		iChangeSpeedMS = 2500;
+		iMinBlockSpeed = 80;
 	}
 }tsSDKPara;
 
@@ -157,7 +159,7 @@ typedef struct tsSDKStatistic
 	int           iGrayBytes;    //
 	tsSDKStatistic()
 	{
-		reset();
+		resetAll();
 		iGrayBytes = 0;
 	}
 	void reset()
@@ -173,8 +175,14 @@ typedef struct tsSDKStatistic
 		iValid = 0;
 		iInvalid = 0;
 		dRMS = 0;
-		u64CurrentS = 0;
+		//u64CurrentS = 0;
 		iErrorCountContinue = 0;
+	}
+	void resetAll()
+	{
+		reset();
+		
+		u64CurrentS = 0;
 	}
 }tsSDKStatistic;
 

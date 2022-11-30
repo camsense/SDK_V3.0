@@ -1,6 +1,6 @@
 INCLUDE_DIRECTORIES(.)
 
-SET(LIDAR_SRC hchead.cpp hclidar.cpp lidar.cpp ReadParsePackage.cpp HC_serial.cpp HcSDK.cpp)
+SET(LIDAR_SRC hchead.cpp hclidar.cpp lidar.cpp ReadParsePackage.cpp HC_serial.cpp HcSDK.cpp fltline.h)
 ADD_LIBRARY(lidar ${LIDAR_SRC})
 IF (WIN32)
 ELSE()

@@ -1,6 +1,7 @@
 INCLUDE_DIRECTORIES(${CAMSENSE_SOURCE_DIR}/src/base)
+INCLUDE_DIRECTORIES(${CAMSENSE_SOURCE_DIR}/src/toolkit)
 LINK_DIRECTORIES(${CAMSENSE_SOURCE_DIR}/src/base)
-
+LINK_DIRECTORIES(${CAMSENSE_SOURCE_DIR}/src/toolkit)
 
 INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/dep
@@ -13,6 +14,7 @@ LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 
 	
 ADD_SUBDIRECTORY(base)
+ADD_SUBDIRECTORY(toolkit)
 
 #ADD_EXECUTABLE (sdk_demo sdk_demo.cpp)
 #TARGET_LINK_LIBRARIES (sdk_demo lidar)
@@ -21,7 +23,7 @@ ADD_SUBDIRECTORY(base)
 #TARGET_LINK_LIBRARIES (raspberrypi_demo lidar wiringPi)
 
 ADD_EXECUTABLE (sdk_V3_demo sdk_V3_demo.cpp LidarTest.cpp)
-TARGET_LINK_LIBRARIES (sdk_V3_demo lidar)
+TARGET_LINK_LIBRARIES (sdk_V3_demo lidar lidar_toolkit)
 
 ADD_EXECUTABLE (sdk_scanData sdk_scanData.cpp)
 TARGET_LINK_LIBRARIES (sdk_scanData lidar)

@@ -73,6 +73,12 @@ extern "C" {
 	//set the lidar low speed status
 	void setSDKLidarLowSpeed(bool bLow);
 
+	//零度角补偿开关
+	void setSDKAngOffset(bool bAngOffSet);
+
+	//杂点 射线过滤开关
+	//void setSDKFilter(bool bfilter);
+
 #ifdef __cplusplus
 };
 #endif

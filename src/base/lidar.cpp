@@ -106,7 +106,7 @@ void Dev::CacheScanData()
         rtn = rdPrPack_.ReadDataSerial();                    // Read data from serial port
         if (rtn <= 0)
         {
-            printf("Warning: Read serial data time out! %d\n", rtn);
+            //printf("Warning: Read serial data time out! %d\n", rtn);
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             continue;
         }

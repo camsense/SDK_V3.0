@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
     int com_id = 0;             // Open serial port using valid COM id
 #ifdef _WIN32
-    com_id = 3;
+    com_id = 7;
 #else
     com_id = 0;
 #endif
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 #endif
 
     Dev device;
-    int rs = device.Initialize(buff, 115200, true);
+    int rs = device.Initialize(buff, 230400, true);
     if (rs != 0)
     {
         printf("Initialize failed.\n");
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
         int errcode = device.GetLastErrCode();
         if (errcode != LIDAR_SUCCESS)
         {
-            printf("errcode:%d\n", errcode);
+			LOG_WARNING("errcode:%d\n", errcode);
         }
 
         if (dataList.empty())
@@ -101,10 +101,10 @@ int main(int argc, char **argv)
             //std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
-
+		LOG_WARNING("Little datasize = %d\n", dataList.size());
         if (dataList.size() < 300)
         {
-            printf("Little datasize = %d\n", dataList.size());
+			LOG_WARNING("Little datasize = %d\n", dataList.size());
         }
 
 

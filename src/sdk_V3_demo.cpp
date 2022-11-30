@@ -10,7 +10,7 @@
 
 #include "base/HcData.h"
 #include "base/HcSDK.h"
-
+#include "toolkit/Hctoolkit.h"
 
 std::string  g_strLidarID = "";
 
@@ -125,12 +125,83 @@ std::string getLidarModel()
 }
 
 
+bool filterPointCloud(LstPointCloud& lstG,const char* pModel)
+{
+	int rtn = 0;
+
+	if (lstG.size() == 0)
+		return false;
+
+	if (pModel == nullptr)
+		return false;
+
+	//If need Filter 
+	hcSDKFltInitialize();
+	//printf("hcSDKFltInitialize() complete\n");
+
+	//To update lidar paras of model "X2B" 
+	stFltLidarCfg_t stLidarPara;
+	bool bLowSpinSpeed = false;
+	if (!UpdateLidarPara(pModel, bLowSpinSpeed, stLidarPara))
+	{
+		printf("The stLidar Para with default value\n");
+		return false;
+	}
+
+	UINT64 u64Start = HCHead::getCurrentTimestampUs();
+
+	int iInputSize = lstG.size();
+	//The tsPtClouds of 1-circle Point Clouds to be processed  	
+	std::vector<stPtCloud_t> tsPtClouds;
+	
+	for (auto& sInfo : lstG)
+	{
+		stPtCloud_t sTemp;
+		memcpy(&sTemp, &sInfo, sizeof(stPtCloud_t));
+		tsPtClouds.push_back(sTemp);
+	}
+	//printf("‘tsPtClouds’ size is  %d \n", tsPtClouds.size());
+	
+
+	//Can Overwrite stFltGblSetting or stFltLParas here, 
+	//or with the default value which defined with micro-Define in HcPointCloudData.h
+	stFltGblSetting_t stFltGblSetting;
+	stFltLParas_t stFltLParas;
+	stFltGblSetting.fFacAdjHSpd = 3.0;
+	stFltLParas.nActDist = 800;
+
+	//Call Filter function
+	hotPixelFilter(tsPtClouds, stLidarPara, stFltGblSetting, stFltLParas);
+
+	lstG.clear();
+	lstG.resize(0);
+	for (auto& sInfo : tsPtClouds)
+	{
+		tsPointCloud sTemp;
+		memcpy(&sTemp, &sInfo, sizeof(stPtCloud_t));
+		lstG.push_back(sTemp);
+	}
+
+	int iOutSize = lstG.size();
+
+	printf("Input size=%d ,out size=%d \n", iInputSize,iOutSize);
+
+	//Close modoule  
+	hcSDKFltUnInit();
+
+	UINT64 u64End = HCHead::getCurrentTimestampUs();
+
+	printf("Input size=%d ,out size=%d, time = %lld us\n", iInputSize, iOutSize, (u64End- u64Start));
+
+	return true;
+}
+
 int main()
 {
 
     int rtn = 0;
 
-    bool bPollMode = false;
+    bool bPollMode = true;//点云获取分轮询模式、回调模式
     bool bDistQ2 = false;
     bool bLoop = false;
 
@@ -167,9 +238,10 @@ int main()
 	std::string strLidarModel = getLidarModel();
 
 
-	int iReadTimeoutms = 2;//10
+	int iReadTimeoutms = 2;//读取串口数据超时
 
-	setSDKCircleDataMode();
+	setSDKAngOffset(true);//启用零度角修正，需要配合雷达上电获取属性包，部分型号支持（X1S，D2系列）。
+	setSDKCircleDataMode();//按圈获取点云
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
 
     if (rtn != 1)
@@ -182,9 +254,9 @@ int main()
         
     }
 
-	setSDKLidarPowerOn(true);
+	setSDKLidarPowerOn(true);//通知camsense SDK 雷达已经上电
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	/*if (!getSDKLidarInfo())
 	{
 		hcSDKUnInit();
@@ -224,47 +296,41 @@ int main()
             else
             {
                 LstPointCloud lstG;
+				
 				if (getSDKRxPointClouds(lstG))
 				{
+					
 					if (lstG.size() > 0)
 					{
+						//过滤杂点、射线
+						//filterPointCloud(lstG, strLidarModel.c_str());
+
 						sdkCallBackFunPointCloud(lstG);
-						//printf("Main: ------------------------------Poll Rx Points=%d\n", lstG.size());
-						//for (auto sInfo : lstG)
-						//{
-							//if(sInfo.dAngle>340 || sInfo.dAngle < 20)
-								//printf("Main: Angle=%0.4f,Raw_Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.dAngleRaw,sInfo.u16Dist);//
-							//printf( "Main: Angle=%0.4f,Dist=%d,Gray=%d\n", sInfo.dAngle , sInfo.u16Dist, sInfo.u16Gray);
-						//}
+
 					}
 					
 				}
-				else
+
+				int iError = getSDKLastErrCode();
+				if (iError != LIDAR_SUCCESS)
 				{
-					int iError = getSDKLastErrCode();
-					if (iError != LIDAR_SUCCESS)
+					printf("Main: Poll Rx Points error code=%d\n", iError);
+					switch (iError)
 					{
-						printf( "Main: Poll Rx Points error code=%d\n", iError );
-						switch (iError)
-						{
-						case ERR_SHARK_MOTOR_BLOCKED:
-							break;
-						case ERR_SHARK_INVALID_POINTS:
-							break;
-						case ERR_LIDAR_SPEED_LOW:
-							break;
-						case ERR_LIDAR_SPEED_HIGH:
-							break;
-						case ERR_DISCONNECTED:
-							break;
-						case ERR_LIDAR_FPS_INVALID:
-							break;
-						default:
-							break;
-						}
+					case ERR_SHARK_MOTOR_BLOCKED://堵转消息
+						break;
+					case ERR_SHARK_INVALID_POINTS://雷达被遮挡
+						break;
+					case ERR_DISCONNECTED://连接丢失
+						break;
+					case ERR_RX_CONTINUE://持续接收校验错误包
+						break;
+					case ERR_LIDAR_FPS_INVALID:
+						break;
+					default:
+						break;
 					}
 				}
-				                
             }
         }
         //int iSDKStatus = getSDKStatus();

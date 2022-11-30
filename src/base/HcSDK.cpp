@@ -150,6 +150,16 @@ void setSDKLidarLowSpeed(bool bLow)
 	g_device.setLidarLowSpeed(bLow);
 }
 
+void setSDKAngOffset(bool bAngOffSet)
+{
+	g_device.setAngOffset(bAngOffSet);
+}
+
+//void setSDKFilter(bool bfilter)
+//{
+//	g_device.setFilter(bfilter);
+//}
+
 #ifdef __cplusplus
 };
 #endif
