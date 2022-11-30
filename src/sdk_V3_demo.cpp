@@ -84,20 +84,9 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
     }
 		
 	outFile.close();
-
-	
-
 	
 }
 
-void sdkCallBackFunDistQ2(LstNodeDistQ2 lstG)
-{
-    std::cout << "Main: sdkCallBackFunDistQ2 Rx Points=" << lstG.size() <<std::endl;
-    for(auto sInfo : lstG)
-    {
-        //std::cout << "Main: Angle=" << sInfo.angle_q6_checkbit/64.0f  << ",Dist=" << sInfo.distance_q2/4 << std::endl;
-    }
-}
 
 int getPort()
 {
@@ -202,7 +191,6 @@ int main()
     int rtn = 0;
 
     bool bPollMode = true;//点云获取分轮询模式、回调模式
-    bool bDistQ2 = false;
     bool bLoop = false;
 
 	std::string strVer = getSDKVersion();
@@ -219,8 +207,7 @@ int main()
         auto funPointCloud = std::bind(sdkCallBackFunPointCloud, std::placeholders::_1);
         setSDKCallBackFunPointCloud(funPointCloud);
 
-        auto funDistQ2 = std::bind(sdkCallBackFunDistQ2, std::placeholders::_1);
-        setSDKCallBackFunDistQ2(funDistQ2);
+       
     }
 
 	
@@ -242,7 +229,7 @@ int main()
 
 	setSDKAngOffset(true);//启用零度角修正，需要配合雷达上电获取属性包，部分型号支持（X1S，D2系列）。
 	setSDKCircleDataMode();//按圈获取点云
-	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, bDistQ2, bLoop, bPollMode);
+	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, false, bLoop, bPollMode);
 
     if (rtn != 1)
     {
@@ -283,67 +270,44 @@ int main()
 
         if(bPollMode)
         {
-            if(bDistQ2)
-            {
-                LstNodeDistQ2 lstG;
-                getSDKScanData(lstG, false);
-				printf( "Main: Poll DistQ2 Rx Points=%d\n" ,lstG.size() );
-                for(auto sInfo : lstG)
-                {
-					//printf("Main: Angle=%0.2f,Dist=%d\n" ,(double)sInfo.angle_q6_checkbit/64.0f  , sInfo.distance_q2/4 );
-                }
-            }
-            else
-            {
-                LstPointCloud lstG;
-				
-				if (getSDKRxPointClouds(lstG))
+			LstPointCloud lstG;
+
+			if (getSDKRxPointClouds(lstG))
+			{
+
+				if (lstG.size() > 0)
 				{
-					
-					if (lstG.size() > 0)
-					{
-						//过滤杂点、射线
-						//filterPointCloud(lstG, strLidarModel.c_str());
+					//过滤杂点、射线
+					//filterPointCloud(lstG, strLidarModel.c_str());
 
-						sdkCallBackFunPointCloud(lstG);
+					sdkCallBackFunPointCloud(lstG);
 
-					}
-					
 				}
 
-				int iError = getSDKLastErrCode();
-				if (iError != LIDAR_SUCCESS)
+			}
+
+			int iError = getSDKLastErrCode();
+			if (iError != LIDAR_SUCCESS)
+			{
+				printf("Main: Poll Rx Points error code=%d\n", iError);
+				switch (iError)
 				{
-					printf("Main: Poll Rx Points error code=%d\n", iError);
-					switch (iError)
-					{
-					case ERR_SHARK_MOTOR_BLOCKED://堵转消息
-						break;
-					case ERR_SHARK_INVALID_POINTS://雷达被遮挡
-						break;
-					case ERR_DISCONNECTED://连接丢失
-						break;
-					case ERR_RX_CONTINUE://持续接收校验错误包
-						break;
-					case ERR_LIDAR_FPS_INVALID:
-						break;
-					default:
-						break;
-					}
+				case ERR_SHARK_MOTOR_BLOCKED://堵转消息
+					break;
+				case ERR_SHARK_INVALID_POINTS://雷达被遮挡
+					break;
+				case ERR_DISCONNECTED://连接丢失
+					break;
+				case ERR_RX_CONTINUE://持续接收校验错误包
+					break;
+				case ERR_LIDAR_FPS_INVALID:
+					break;
+				default:
+					break;
 				}
-            }
+			}
         }
-        //int iSDKStatus = getSDKStatus();
-		//printf("Main: SDK Status=%d\n" ,iSDKStatus );
 
-		//iCount++;
-		//if (iCount > 300)
-		//{
-		//	iCount = 0;
-		//	//g_strLidarID = getSDKLidarID();
-		//	//printf("Lidar ID=%s\n", g_strLidarID.c_str());
-		//}
-		
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         std::this_thread::yield();

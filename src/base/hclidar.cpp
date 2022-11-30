@@ -737,7 +737,7 @@ BOOL HCLidar::initialize(const char* chPort, const char* chLidarModel,int iBaud,
 	m_bScanning = false;
     m_bGetLoopData = bGetLoopData;
     m_bPollMode = bPollMode;
-    m_bDistQ2 = bDistQ2;
+    //m_bDistQ2 = bDistQ2;
 
 	if (!m_bFactoryMode)
 	{
@@ -1134,11 +1134,8 @@ void HCLidar::checkHadInitSuccess(bool bTimeout)
     }
 }
 
-bool HCLidar::processData()
+bool HCLidar::checkContinuePacketErr()
 {
-    if(m_lstBuff.size()<=2)
-        return false;
-
 	if (m_sStatistic.iErrorCountContinue >= NUMBER_CONTINUE_ERROR_PACKET)
 	{
 		m_sStatistic.iErrorCountContinue = 0;
@@ -1148,8 +1145,18 @@ bool HCLidar::processData()
 			m_lstBuff.clear();
 		LOG_ERROR("Continuous Rx error packet:%d!\n", NUMBER_CONTINUE_ERROR_PACKET);
 		setReadCharsError(ERR_RX_CONTINUE);
-		return false;
+		return true;
 	}
+	return false;
+}
+bool HCLidar::processData()
+{
+    if(m_lstBuff.size()<=2)
+        return false;
+
+	if (checkContinuePacketErr())
+		return false;
+	
     int iIndex = -1;
     int iMsgID = 0;
     for(int i=0;i<m_lstBuff.size()-1;i++)
@@ -2147,7 +2154,6 @@ bool HCLidar::getRxPointClouds(LstPointCloud& lstG)
 			{
 				LstPointCloud tmp = *m_Circles.begin();
 
-				//localDensityFilter(tmp, lstG);
 				lstG.swap(tmp);
 				m_Circles.erase(m_Circles.begin());
 			}
@@ -2371,288 +2377,7 @@ void HCLidar::checkSharkInvalidPoints(tsPointCloud& sData)
     }
 }
 
-/*
-void HCLidar::getScanData(tsNodeInfo * nodebuffer, size_t buffLen, size_t &count, bool bReverse)
-{
-    if (nodebuffer == nullptr || buffLen == 0)
-    {
-        count = 0;
-        return;
-    }
 
-    grabScanData(nodebuffer, buffLen, count);
-
-    for (int i = 0; i < count; ++i)
-    {
-        double angle_cur = nodebuffer[i].angle_q6_checkbit;
-        angle_cur = angle_cur / 64.0;
-        if (angle_cur > 360)
-        {
-            angle_cur -= 360;
-        }
-        else if (angle_cur < 0)
-        {
-            angle_cur += 360;
-        }
-
-        if (bReverse)
-        {
-            angle_cur = 360 - angle_cur;
-        }
-
-        nodebuffer[i].angle_q6_checkbit = angle_cur * 64;
-    }
-}
-*/
-
-bool HCLidar::getScanData(std::list<tsNodeInfo>& dataList, bool bReverse)
-{
-
-    grabScanData(dataList);
-
-	if (dataList.size() == 0)
-		return false;
-
-    for (auto it = dataList.begin(); it != dataList.end(); ++it)
-    {
-        double angle_cur = it->angle_q6_checkbit;
-        angle_cur = angle_cur / 64.0;
-        if (angle_cur > 360)
-        {
-            angle_cur -= 360;
-        }
-        else if (angle_cur < 0)
-        {
-            angle_cur += 360;
-        }
-
-        if (bReverse)
-        {
-            angle_cur = 360 - angle_cur;
-        }
-
-        it->angle_q6_checkbit = angle_cur * 64;
-    }
-	return true;
-}
-
-
-
-void HCLidar::grabScanDataWithLoop(std::list<tsNodeInfo>& nodeList, tsNodeInfo* nodebuffer, size_t buffLen)
-{
-    int len = nodeList.size();
-
-	if (len == 0)
-		return;
-
-    double perAngle = 360.0 / nodeList.size();
-    for (int i = 0; i < len; ++i)
-    {
-        nodebuffer[i].angle_q6_checkbit = perAngle * (i + 1.0) * 64;
-        nodebuffer[i].distance_q2 = 0;
-        nodebuffer[i].isValid = 0;
-        nodebuffer[i].syn_quality = 0;
-        //printf("%.3f,%d,%d\n", nodebuffer[i].angle_q6_checkbit, nodebuffer[i].distance_q2, nodebuffer[i].isValid);
-    }
-
-    for (auto it = nodeList.begin(); it != nodeList.end(); ++it)
-    {
-        if (it->isValid == 1)
-        {
-            int index = (it->angle_q6_checkbit / (perAngle * 64.0)) + 0.5 - 1;
-            //printf("index:%d\n", index);
-            pushValidData2Buffer(*it, index, nodebuffer, len);
-        }
-    }
-
-    if (!checkBufferIsSorted(nodebuffer, len))
-    {
-        //printf("data is not sorted.\n");
-        //std::stable_sort(nodebuffer, nodebuffer + len);
-		std::stable_sort(nodebuffer, nodebuffer + len, nodeComparator);
-    }
-}
-
-void HCLidar::pushValidData2Buffer(tsNodeInfo& nodeInfo, int index, tsNodeInfo* nodebuffer, int len)
-{
-    bool isExit = false;
-    while (!isExit)
-    {
-        index = index % len;
-        if (nodebuffer[index].isValid == 0)
-        {
-            nodebuffer[index] = nodeInfo;
-            isExit = true;
-        }
-
-        ++index;
-    };
-}
-
-bool HCLidar::checkBufferIsSorted(tsNodeInfo* nodebuffer, int len)
-{
-    if (len < 2)
-    {
-        return true;
-    }
-
-    for (int i = 1; i < len; ++i)
-    {
-        if (nodebuffer[i - 1].angle_q6_checkbit > nodebuffer[i].angle_q6_checkbit)
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-void HCLidar::grabScanDataWithNoLoop(std::list<tsNodeInfo>& nodeList, tsNodeInfo* nodebuffer, size_t buffLen)
-{
-    size_t index = 0;
-    size_t indexCount = 0;
-    size_t startIndex = 0;
-    size_t nodeLen = nodeList.size();
-
-	if (nodeLen == 0)
-		return;
-
-    if (nodeLen > buffLen)
-    {
-        startIndex = nodeLen - buffLen;
-    }
-
-    for (auto it = nodeList.begin(); it != nodeList.end(); ++it, ++indexCount)
-    {
-        if (indexCount >= startIndex)
-        {
-            nodebuffer[index] = *it;
-            ++index;
-        }
-    }
-}
-
-void HCLidar::grabScanData(tsNodeInfo * nodebuffer, size_t buffLen, size_t &count)
-{
-    std::list<tsNodeInfo> nodeList;
-    {
-        std::lock_guard<std::mutex> guard(m_mtxData);
-        nodeList.swap(m_sNodeList);
-    }
-
-    count = nodeList.size();
-    if (count == 0)
-    {
-        return;
-    }
-
-    if (m_bGetLoopData)
-    {
-        if (count > buffLen)
-        {
-			//LOG_ERROR("Rx buffer is too small\n" );
-            setReadCharsError(ERR_RECEIVE_BUFFER_SMALL);
-            count = 0;
-            return;
-        }
-
-        grabScanDataWithLoop(nodeList, nodebuffer, buffLen);
-    }
-    else
-    {
-        grabScanDataWithNoLoop(nodeList, nodebuffer, buffLen);
-    }
-
-}
-
-void HCLidar::grabScanData(std::list<tsNodeInfo>& dataList)
-{
-    std::list<tsNodeInfo> nodeList;
-    {
-        std::lock_guard<std::mutex> guard(m_mtxData);
-        nodeList.swap(m_sNodeList);
-    }
-
-    if (nodeList.empty())
-    {
-        return;
-    }
-
-    size_t count = nodeList.size();
-    tsNodeInfo* nodebuffer = new tsNodeInfo[count];
-    if (m_bGetLoopData)
-    {
-        grabScanDataWithLoop(nodeList, nodebuffer, count);
-    }
-    else
-    {
-        grabScanDataWithNoLoop(nodeList, nodebuffer, count);
-    }
-
-    for (int i = 0; i < count; ++i)
-    {
-        dataList.push_back(nodebuffer[i]);
-    }
-
-    delete[] nodebuffer;
-
-}
-
-void HCLidar::convertDistQ2(LstPointCloud& lstG)
-{
-    for(auto sInfo:lstG)//for (int i = 0; i < rdPrPack_.data_num_per_pack_; ++i)
-    {
-        tsNodeInfo node_cur;
-        m_dAngleCur = sInfo.dAngleRaw;
-        // Compensate angle & dist
-        unsigned int dist = sInfo.u16Dist;
-
-        if (sInfo.bValid)
-        {
-            // valid data
-            node_cur.distance_q2 = (uint16_t)(sInfo.u16Dist * 4);
-
-            node_cur.isValid = 1;
-            ++m_iValidNumber;
-        }
-        else
-        {
-            // invalid data
-            node_cur.distance_q2 = 0;
-            node_cur.isValid = 0;
-        }
-
-        node_cur.angle_q6_checkbit = (uint16_t)(sInfo.dAngle * 64);
-        node_cur.syn_quality = sInfo.u16Gray;
-
-        if (m_dAnglePre > m_dAngleCur)
-        {
-            m_bTurn = true;
-            m_bFirsLoop = true;
-
-            checkInvalidLidarNumber(m_iValidNumber);
-            m_iValidNumber = 0;
-        }
-        //printf("%.4f,%.4f\n", preAngle, angle_cur);
-        if (!m_bFirsLoop)
-        {
-            m_dAnglePre = m_dAngleCur;
-            continue;
-        }
-
-        if (!m_bGetLoopData)
-        {
-            pushDataWithNoLoopMode(node_cur);
-        }
-        else
-        {
-            pushDataWithLoopMode(m_bTurn, m_sLoopNodeList, node_cur);
-        }
-
-        m_dAnglePre = m_dAngleCur;
-        //printf("%.3f\n", node_cur.angle_q6_checkbit /  64.0f);
-    }
-}
 
 
 void HCLidar::checkInvalidLidarNumber(int validNumber)
@@ -2673,157 +2398,68 @@ void HCLidar::checkInvalidLidarNumber(int validNumber)
         m_iInvalidNumberContinue = 0;
     }
 }
-void HCLidar::pushDataWithNoLoopMode(tsNodeInfo& node_cur)
-{
-    //std::lock_guard<std::mutex> guard(mutex_);
-    if (m_sNodeList.size() >= m_sSDKPara.iPollBuffSize)
-    {
-        m_sNodeList.pop_front();
-        setReadCharsError(ERR_BUFF_FULL);
-    }
-
-    m_sNodeList.push_back(node_cur);
-}
-
-//isGetLoopData is false
-void HCLidar::pushDataWithLoopMode(bool& bTurn, std::list<tsNodeInfo>& loopNodeList, tsNodeInfo& node_cur)
-{
-    if (bTurn)
-    {
-        if (!m_bGreaterThan || (m_bGreaterThan && loopNodeList.size() > LESS_THAN_NUMBER))
-        {
-            //std::lock_guard<std::mutex> guard(mutex_);
-            m_sNodeList.clear();
-            m_sNodeList.swap(loopNodeList);
-        }
-        else
-        {
-            loopNodeList.clear();
-        }
-
-        bTurn = false;
-        m_bGreaterThan = false;
-
-    }
-    else if (loopNodeList.size() >= m_sAttr.dCirclePoints)
-    {
-        {
-            //std::lock_guard<std::mutex> guard(mutex_);
-            m_sNodeList.clear();
-            m_sNodeList.swap(loopNodeList);
-        }
-
-        m_bGreaterThan = true;
-    }
-    loopNodeList.push_back(node_cur);
-}
-
-void HCLidar::callbackDistQ2()
-{
-    LstNodeDistQ2 dataList;
-    getScanData(dataList,true);
-
-    if(dataList.size()>0)
-        m_funDistQ2(dataList);
-}
 
 
 void HCLidar::pollModePointCloud()
 {
 	//LOG_INFO("pollModePointCloud\n");
-	if (m_bDistQ2)
+	if (m_bCircle)
 	{
-		if (m_resultRange.size() > 0)
+		if (getOneCircleData())
 		{
-			convertDistQ2(m_resultRange);
+			m_Circles.push_back(m_lstCircle);
 			LstPointCloud tmp;
-			tmp.swap(m_resultRange);
+			tmp.swap(m_lstCircle);
+
+		}
+		if (m_Circles.size() > m_sSDKPara.iCirclesBuffSize)
+		{
+			m_Circles.erase(m_Circles.begin());
+			setReadCharsError(ERR_BUFF_FULL);
 		}
 	}
 	else
 	{
-		if (m_bCircle)
+		if (m_resultRange.size() > m_sSDKPara.iPollBuffSize)
 		{
-			if (getOneCircleData())
-			{
-				m_Circles.push_back(m_lstCircle);
-				LstPointCloud tmp;
-				tmp.swap(m_lstCircle);
-				
-			}
-			if (m_Circles.size() > m_sSDKPara.iCirclesBuffSize)
-			{
-				m_Circles.erase(m_Circles.begin());
-				setReadCharsError(ERR_BUFF_FULL);
-			}
-		}
-		else
-		{
-			if (m_resultRange.size() > m_sSDKPara.iPollBuffSize)
-			{
-				HCHead::eraseRangeData(m_resultRange, m_resultRange.size() - m_sSDKPara.iPollBuffSize);
-				setReadCharsError(ERR_BUFF_FULL);
-			}
+			HCHead::eraseRangeData(m_resultRange, m_resultRange.size() - m_sSDKPara.iPollBuffSize);
+			setReadCharsError(ERR_BUFF_FULL);
 		}
 	}
 }
 void HCLidar::callBackFunPointCloud()
 {
-	if (m_bDistQ2)
+	if (m_bCircle)
 	{
-		if (m_resultRange.size() > 0)
+		if (getOneCircleData())
 		{
-			convertDistQ2(m_resultRange);
-			LstPointCloud tmp;
-			tmp.swap(m_resultRange);
-		}
-		if (m_sNodeList.size() >= m_sSDKPara.iCallbackBuffSize)
-		{
-
-			if (m_funDistQ2)
+			if (m_funPointCloud)
 			{
-				callbackDistQ2();
+
+				m_funPointCloud(m_lstCircle);
 			}
 			else
 			{
 				setReadCharsError(ERR_CALLBACK_FUN);
 			}
+			LstPointCloud tmp;
+			tmp.swap(m_lstCircle);
 		}
 	}
 	else
 	{
-		if (m_bCircle)
+		if (m_resultRange.size() >= m_sSDKPara.iCallbackBuffSize)
 		{
-			if (getOneCircleData())
+			if (m_funPointCloud)
 			{
-				if (m_funPointCloud)
-				{
-
-					m_funPointCloud(m_lstCircle);
-				}
-				else
-				{
-					setReadCharsError(ERR_CALLBACK_FUN);
-				}
-				LstPointCloud tmp;
-				tmp.swap(m_lstCircle);
+				m_funPointCloud(m_resultRange);
 			}
-		}
-		else
-		{
-			if (m_resultRange.size() >= m_sSDKPara.iCallbackBuffSize)
+			else
 			{
-				if (m_funPointCloud)
-				{
-					m_funPointCloud(m_resultRange);
-				}
-				else
-				{
-					setReadCharsError(ERR_CALLBACK_FUN);
-				}
-				LstPointCloud tmp;
-				tmp.swap(m_resultRange);
+				setReadCharsError(ERR_CALLBACK_FUN);
 			}
+			LstPointCloud tmp;
+			tmp.swap(m_resultRange);
 		}
 	}
 

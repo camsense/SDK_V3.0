@@ -131,54 +131,40 @@ void LidarTest::initLidar()
 
 		if(bPollMode)
 		{
-		    if(bDistQ2)
-		    {
-		        LstNodeDistQ2 lstG;
-		        device.getScanData(lstG, false);
-		        std::cout << "Main: Poll DistQ2 Rx Points=" << lstG.size() <<std::endl;
-		        for(auto sInfo : lstG)
-		        {
-		            //std::cout << "Main: Angle=" << (double)sInfo.angle_q6_checkbit/64.0f  << ",Dist=" << sInfo.distance_q2/4 << std::endl;
-		        }
-		    }
-		    else
-		    {
-		        LstPointCloud lstG;
-				if (device.getRxPointClouds(lstG))
+			LstPointCloud lstG;
+			if (device.getRxPointClouds(lstG))
+			{
+				printf("LidarTest: Poll Rx Points=%d\n", lstG.size());
+				for (auto sInfo : lstG)
 				{
-					printf("LidarTest: Poll Rx Points=%d\n", lstG.size());
-					for (auto sInfo : lstG)
+					//printf("LidarTest: Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.u16Dist);
+				}
+			}
+			else
+			{
+				int iError = device.getLastErrCode();
+				if (iError != LIDAR_SUCCESS)
+				{
+					printf("LidarTest: Poll Rx Points error code=%d", iError);
+					switch (iError)
 					{
-						//printf("LidarTest: Angle=%0.4f,Dist=%d\n", sInfo.dAngle, sInfo.u16Dist);
+					case ERR_SHARK_MOTOR_BLOCKED:
+						break;
+					case ERR_SHARK_INVALID_POINTS:
+						break;
+					case ERR_LIDAR_SPEED_LOW:
+						break;
+					case ERR_LIDAR_SPEED_HIGH:
+						break;
+					case ERR_DISCONNECTED:
+						break;
+					case ERR_LIDAR_FPS_INVALID:
+						break;
+					default:
+						break;
 					}
 				}
-				else
-				{
-					int iError = device.getLastErrCode();
-					if (iError != LIDAR_SUCCESS)
-					{
-						printf("LidarTest: Poll Rx Points error code=%d" , iError );
-						switch (iError)
-						{
-						case ERR_SHARK_MOTOR_BLOCKED:
-							break;
-						case ERR_SHARK_INVALID_POINTS:
-							break;
-						case ERR_LIDAR_SPEED_LOW:
-							break;
-						case ERR_LIDAR_SPEED_HIGH:
-							break;
-						case ERR_DISCONNECTED:
-							break;
-						case ERR_LIDAR_FPS_INVALID:
-							break;
-						default:
-							break;
-						}
-					}
-				}
-					                
-		    }
+			}
 		}
 		int iSDKStatus = device.getSDKStatus();
 

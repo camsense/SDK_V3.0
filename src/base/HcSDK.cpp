@@ -42,11 +42,6 @@ void setSDKCallBackFunPointCloud(CallBackFunPointCloud fun)
 	g_device.setCallBackFunPointCloud(fun);
 }
 
-//set callback function for rx Distance Q2
-void setSDKCallBackFunDistQ2(CallBackFunDistQ2 fun)
-{
-	g_device.setCallBackFunDistQ2(fun);
-}
 
 //get error code
 int getSDKLastErrCode()
@@ -120,11 +115,7 @@ bool getSDKRxPointClouds(LstPointCloud& lstG)
 	return g_device.getRxPointClouds(lstG);
 }
 
-//poll mode,get ScanData
-bool getSDKScanData(std::list<tsNodeInfo>& dataList, bool bReverse)
-{
-	return g_device.getScanData(dataList, bReverse);
-}
+
 
 void setSDKFactoryMode(bool bFactoryMode)
 {

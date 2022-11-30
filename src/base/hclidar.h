@@ -99,11 +99,7 @@ public:
         m_funPointCloud = fun;
     }
 
-	//set callback function for rx Distance Q2
-    void setCallBackFunDistQ2(CallBackFunDistQ2 fun)
-    {
-        m_funDistQ2 = fun;
-    }
+
 
 	//get error code
     int getLastErrCode()
@@ -162,8 +158,7 @@ public:
 	//poll mode,get pointclouds
     bool getRxPointClouds(LstPointCloud& lstG);
 
-	//poll mode,get ScanData
-    bool getScanData(std::list<tsNodeInfo>& dataList, bool bReverse=true);
+
 
 	void setFactoryMode(bool bFactoryMode=true)
 	{
@@ -238,7 +233,7 @@ private:
 
     bool                     m_bGetLoopData = false;
     bool                     m_bPollMode=false;
-    bool                     m_bDistQ2=false;
+    //bool                     m_bDistQ2=false;
     int                      m_iInvalidNumberContinue = 0;
     bool                     m_bGreaterThan = false;
     HC_serial                m_serial ;
@@ -366,17 +361,9 @@ private:
 
 	void checkBlockSpeed(UINT16 u16speed);
 
-    void grabScanDataWithLoop(std::list<tsNodeInfo>& nodeList, tsNodeInfo* nodebuffer, size_t buffLen);
-    void pushValidData2Buffer(tsNodeInfo& nodeInfo, int index, tsNodeInfo* nodebuffer, int len);
-    bool checkBufferIsSorted(tsNodeInfo* nodebuffer, int len);
-    void grabScanDataWithNoLoop(std::list<tsNodeInfo>& nodeList, tsNodeInfo* nodebuffer, size_t buffLen);
-    void grabScanData(tsNodeInfo * nodebuffer, size_t buffLen, size_t &count);
-    void grabScanData(std::list<tsNodeInfo>& dataList);
-    void convertDistQ2(LstPointCloud& lstG);
-    void pushDataWithNoLoopMode(tsNodeInfo& node_cur);
-    void pushDataWithLoopMode(bool& isTurn, std::list<tsNodeInfo>& loopNodeList, tsNodeInfo& node_cur);
+    
     void checkInvalidLidarNumber(int validNumber);
-    void callbackDistQ2();
+	bool checkContinuePacketErr();
 
 	void pollModePointCloud();
 	void callBackFunPointCloud();

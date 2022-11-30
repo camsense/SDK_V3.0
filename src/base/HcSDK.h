@@ -19,8 +19,6 @@ extern "C" {
 	//set callback function for rx pointclouds
 	void setSDKCallBackFunPointCloud(CallBackFunPointCloud fun);
 
-	//set callback function for rx Distance Q2
-	void setSDKCallBackFunDistQ2(CallBackFunDistQ2 fun);
 
 	//get error code
 	int getSDKLastErrCode();
@@ -55,8 +53,7 @@ extern "C" {
 	//poll mode,get pointclouds
 	bool getSDKRxPointClouds(LstPointCloud& lstG);
 
-	//poll mode,get ScanData
-	bool getSDKScanData(std::list<tsNodeInfo>& dataList, bool bReverse = true);
+
 
 	//Factory mode for test
 	void setSDKFactoryMode(bool bFactoryMode = true);
