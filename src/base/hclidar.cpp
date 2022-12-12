@@ -13,6 +13,7 @@
 HCLidar::HCLidar()
 {
 	initPara();
+	memset(&m_sPackUID, 0, sizeof(tsPackUID));
     //m_p8Buff = new UCHAR[READ_BUFF_SIZE];
 }
 
@@ -1565,6 +1566,11 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 		//sendGetIDInfoSignal(true);
 
 		sendGetFactoryInfoSignal(true);
+		
+
+		memcpy(&m_sPackUID, &sNewInfo, sizeof(tsSDKSN));
+		
+		
 		LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
 		return true;
 	}
@@ -1932,6 +1938,7 @@ bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int
 		}
 		else
 			sData.u16Gray = 0;
+		
 		sData.u16Speed = speed;
 		sData.dAngleRaw = angle_cur;
 		sData.dAngle = sData.dAngleRaw;
@@ -1963,6 +1970,10 @@ bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int
 				sData.dAngle += m_dAngOffset;
 			}
 		}
+
+		if (m_bDistinguish)
+			sData.u16Gray = getPointCloudLatticePeak(sData.u16Dist, sData.u16Gray);
+
 
 		m_sStatistic.dRMS = speed;
 		resultRange.push_back(sData);
@@ -2776,4 +2787,55 @@ void HCLidar::setLidarLowSpeed(bool bLow)
 
 		}
 	}
+}
+
+UINT16 HCLidar::getPointCloudLatticePeak(int dist_mm, UINT16 peak)
+{
+	if (peak == 0)
+		return peak;
+
+	if (m_sPackUID.u16A1 == 0xFFFF || m_sPackUID.u16B1 == 0xFFFF
+		|| m_sPackUID.u16A2 == 0xFFFF || m_sPackUID.u16B2 == 0xFFFF)
+	{
+		return peak;
+	}
+
+	if (m_sPackUID.u16A1 == 0 && m_sPackUID.u16B1 == 0
+		&& m_sPackUID.u16A2 == 0 && m_sPackUID.u16B2 == 0)
+	{
+		return peak;
+	}
+
+	if (isCheckMaxPeakLattice(m_sPackUID.u16A1, m_sPackUID.u16B1, m_sPackUID.u16A2,m_sPackUID.u16B2, dist_mm, peak))
+	{
+		return PC_GRAY_IS_LATTICE;
+	}
+	else
+		return 0;
+}
+
+bool HCLidar::isCheckMaxPeakLattice(int a1, int b1, int a2, int b2, int dist_mm, UINT16 peak)
+{
+	if (a1 == 0 || b1 == 0 || b2 == 0)
+	{
+		return false;
+	}
+	double a1_tmp = (double)a1 / 1000.00;
+	double a2_tmp = (double)a2 / 1000.00;
+
+	double newpeak = 0;
+	if (dist_mm >= 650)
+	{
+		newpeak = dist_mm * -a2_tmp + b2;
+	}
+	else if (dist_mm > 250 && dist_mm < 650)   //.300
+	{
+		newpeak = dist_mm * -a1_tmp + b1;
+	}
+
+	if (newpeak > 0 && newpeak < peak)
+	{
+		return true;
+	}
+	return false;
 }

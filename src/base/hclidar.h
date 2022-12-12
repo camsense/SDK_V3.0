@@ -177,6 +177,12 @@ public:
 		m_bSetAngOffset = bSetAngOffset;
 	}
 
+	void setPointCloudLattice(bool bDistinguish)
+	{
+		m_bDistinguish = bDistinguish;
+
+	}
+
 	//void setFilter(bool bfilter)
 	//{
 	//	m_bFilter = bfilter;
@@ -305,6 +311,8 @@ private:
 	double                   m_dAngOffset = 0;
 	//bool                     m_bFilter = false;
 
+	tsPackUID                m_sPackUID;
+	bool                     m_bDistinguish = false;
 
 	UINT64                   m_u64CountS = 0;
     UINT64                   m_u64StartMS = 0;
@@ -378,6 +386,9 @@ private:
 	bool rockCheckCRC(unLidarInfo lds_info);
 
 	void resetParam();
+
+	UINT16 getPointCloudLatticePeak(int dist_mm, UINT16 peak);
+	bool isCheckMaxPeakLattice(int a1, int b1, int a2, int b2, int dist_mm, UINT16 peak);
 };
 
 #endif // HCLIDAR_H

@@ -146,6 +146,10 @@ void setSDKAngOffset(bool bAngOffSet)
 	g_device.setAngOffset(bAngOffSet);
 }
 
+void setSDKPointCloudLattice(bool bDistinguish)
+{
+	g_device.setPointCloudLattice(bDistinguish);
+}
 //void setSDKFilter(bool bfilter)
 //{
 //	g_device.setFilter(bfilter);

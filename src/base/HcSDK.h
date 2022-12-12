@@ -76,6 +76,8 @@ extern "C" {
 	//杂点 射线过滤开关
 	//void setSDKFilter(bool bfilter);
 
+	void setSDKPointCloudLattice(bool bDistinguish);
+
 #ifdef __cplusplus
 };
 #endif

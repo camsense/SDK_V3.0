@@ -190,7 +190,7 @@ int main()
 
     int rtn = 0;
 
-    bool bPollMode = true;//点云获取分轮询模式、回调模式
+    bool bPollMode = false;//点云获取分轮询模式、回调模式
     bool bLoop = false;
 
 	std::string strVer = getSDKVersion();
@@ -242,6 +242,13 @@ int main()
     }
 
 	setSDKLidarPowerOn(true);//通知camsense SDK 雷达已经上电
+	setSDKPointCloudLattice(true);
+
+	if (strLidarModel == "X2MF")
+	{
+		setSDKLidarLowSpeed(true);
+	}
+
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	/*if (!getSDKLidarInfo())

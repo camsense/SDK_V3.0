@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"V3.2.19"
+#define SDK_VER                    (char*)"V3.2.20"
 
 #define SHARK_ENABLE               0
 
@@ -175,6 +175,8 @@
 #define  LDS_VOLTAGE_ERROR_SECOND       5  
 #define  PD_ERROR_TIME_MS               3000  
 
+#define  PC_GRAY_IS_LATTICE             255  
+
 union Fp32
 {
 	uint32_t u;
@@ -279,6 +281,30 @@ typedef struct tsSDKSN
 	UCHAR        u8Reserve3[4];
 	UCHAR        u8SN[20];
 }tsSDKSN;
+
+
+typedef struct tsPackUID
+{
+	UINT16       u16Head;
+	UINT16       u16Len;
+	UINT16       u16Cal;
+	UCHAR        u8Type;
+	UCHAR        u8Ver;
+	UCHAR        u8FacInfo[6];
+	UINT16       u16A1;
+	UINT16       u16B1;
+	UINT16       u16Firmware;    
+	UINT8        u8SoftVer[3];   
+	UINT16       u16A2;
+	UINT16       u16B2;
+	UINT8        u8ConfigVer[2];  
+	UINT8        u8HardwareVer[4]; 
+	UINT16       u16AngleOffset;  //2 角度补偿（单位0.01度）
+	UINT8        u8LDDirection;   
+	UINT8        u8CorrectionEnble;  //
+	UINT8        uReserved2[4];  //5 预留
+	UINT8        uSN[20];      //
+}tsPackUID;
 
 typedef struct tsIDX2
 {
