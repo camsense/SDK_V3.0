@@ -250,7 +250,7 @@ int main()
 	readFileOfIfstream(lstTemp);
 	filterPointCloud(lstTemp, "X2A");
 
-	return;
+	return 0;
 #endif
 
 
