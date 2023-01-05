@@ -745,6 +745,7 @@ BOOL HCLidar::initialize(const char* chPort, const char* chLidarModel,int iBaud,
 		m_bScanning = true;
 		m_threadWork = std::thread(&HCLidar::threadWork, this);
 		m_threadParse = std::thread(&HCLidar::threadParse, this);
+		
 
 		/* std::unique_lock<std::mutex> lck(m_mtxInit);
 		 while (!m_bReady)

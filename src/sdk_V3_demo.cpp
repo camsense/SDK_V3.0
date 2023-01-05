@@ -15,6 +15,9 @@
 std::string  g_strLidarID = "";
 
 
+#define  NOISE_FILTER_DEMO      1
+
+
 void sdkCallBackFunErrorCode(int iErrorCode)
 {
 	char buff[128] = { 0 };
@@ -113,7 +116,57 @@ std::string getLidarModel()
 	return str;
 }
 
+void readFileOfIfstream(LstPointCloud& lstG)
+{
+	
+	std::ifstream csv_file("RawData.ini", std::ios::in);
+	std::string line;
 
+	if (!csv_file.is_open())
+	{
+		std::cout << "Error: opening file fail" << std::endl;
+		return;//std::exit(1);
+	}
+
+	std::istringstream sin;         //将整行字符串line读入到字符串istringstream中
+	std::vector<std::string> words; //声明一个字符串向量
+	std::string word;
+
+	// 读取标题行
+	//std::getline(csv_data, line);
+	// 读取数据
+	while (std::getline(csv_file, line))
+	{
+		sin.clear();
+		sin.str(line);
+		words.clear();
+		//while (std::getline(sin, word, ',')) 
+		while (std::getline(sin, word, ' ')) 
+		{
+			words.push_back(word); 
+			//std::cout << word;
+			// std::cout << atol(word.c_str());
+		}
+		if (words.size() >= 2)
+		{
+			tsPointCloud sInfo;
+			sInfo.bValid = true;
+			std::string str = words.at(0);
+			sInfo.dAngle = atof(str.c_str());
+
+			str = words.at(1);
+			sInfo.u16Dist = (UINT16)atof(str.c_str());
+			lstG.push_back(sInfo);
+		}
+		
+
+
+		std::cout << std::endl;
+		// do something。。。
+	}
+	csv_file.close();
+
+}
 bool filterPointCloud(LstPointCloud& lstG,const char* pModel)
 {
 	int rtn = 0;
@@ -148,9 +201,11 @@ bool filterPointCloud(LstPointCloud& lstG,const char* pModel)
 		stPtCloud_t sTemp;
 		memcpy(&sTemp, &sInfo, sizeof(stPtCloud_t));
 		tsPtClouds.push_back(sTemp);
+
+		std::cout << sInfo.dAngle << "," << sInfo.u16Dist << std::endl;
 	}
 	//printf("‘tsPtClouds’ size is  %d \n", tsPtClouds.size());
-	
+	std::cout <<  "-------------------------" << std::endl;
 
 	//Can Overwrite stFltGblSetting or stFltLParas here, 
 	//or with the default value which defined with micro-Define in HcPointCloudData.h
@@ -169,6 +224,8 @@ bool filterPointCloud(LstPointCloud& lstG,const char* pModel)
 		tsPointCloud sTemp;
 		memcpy(&sTemp, &sInfo, sizeof(stPtCloud_t));
 		lstG.push_back(sTemp);
+
+		std::cout << sInfo.dAngle << "," << sInfo.u16Dist << std::endl;
 	}
 
 	int iOutSize = lstG.size();
@@ -187,6 +244,15 @@ bool filterPointCloud(LstPointCloud& lstG,const char* pModel)
 
 int main()
 {
+
+#if NOISE_FILTER_DEMO
+	LstPointCloud lstTemp;
+	readFileOfIfstream(lstTemp);
+	filterPointCloud(lstTemp, "X2A");
+
+	return;
+#endif
+
 
     int rtn = 0;
 
