@@ -15,7 +15,7 @@
 std::string  g_strLidarID = "";
 
 
-#define  NOISE_FILTER_DEMO      1
+#define  NOISE_FILTER_DEMO      0 //0,noise filter demo close,1 noise filter demo open
 
 
 void sdkCallBackFunErrorCode(int iErrorCode)
@@ -293,7 +293,7 @@ int main()
 
 	int iReadTimeoutms = 2;//读取串口数据超时
 
-	setSDKAngOffset(true);//启用零度角修正，需要配合雷达上电获取属性包，部分型号支持（X1S，D2系列）。
+	setSDKAngOffset(true);//启用零度角修正，需要配合雷达上电获取属性包，部分型号支持（D2系列）。
 	setSDKCircleDataMode();//按圈获取点云
 	rtn = hcSDKInitialize(strPort.c_str(), strLidarModel.c_str(), iBaud, iReadTimeoutms, false, bLoop, bPollMode);
 

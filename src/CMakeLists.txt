@@ -25,8 +25,8 @@ ADD_SUBDIRECTORY(toolkit)
 ADD_EXECUTABLE (sdk_V3_demo sdk_V3_demo.cpp LidarTest.cpp)
 TARGET_LINK_LIBRARIES (sdk_V3_demo lidar lidar_toolkit)
 
-ADD_EXECUTABLE (sdk_scanData sdk_scanData.cpp)
-TARGET_LINK_LIBRARIES (sdk_scanData lidar)
+#ADD_EXECUTABLE (sdk_scanData sdk_scanData.cpp)
+#TARGET_LINK_LIBRARIES (sdk_scanData lidar)
 
 #ADD_EXECUTABLE (BS_Demo BS_Demo.cpp LidarTest.cpp)
 #TARGET_LINK_LIBRARIES (BS_Demo lidar)
