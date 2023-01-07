@@ -1508,7 +1508,7 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 		memset(chTemp, 0, 128);
 		if (m_bSetAngOffset) {
 			if (m_sAttr.bAngOffset && sNewInfo.u16Ang != 0xffff) {
-				m_dAngOffset = (INT16)sNewInfo.u16Ang * 0.01;
+				m_dAngOffset = (int)sNewInfo.u16Ang * 0.01;
 				m_dAngOffset = fabs(m_dAngOffset) > 3.0 ? 0 : m_dAngOffset;
 				LOG_INFO("ZeroAngle=%0.2f\n", m_dAngOffset);
 			}
