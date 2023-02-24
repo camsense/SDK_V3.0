@@ -664,6 +664,23 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iFPSNor = FPS_2000_NOR;
 		m_sAttr.iSpeedNor = SPEED_312_NOR;
 	}
+	else if (m_strLidarModel == D2M7)
+	{
+		m_sAttr.dAngleOffsetD = 28.5;
+		m_sAttr.dBaseline_mm = 17;
+		m_sAttr.dTheta_d = 0;
+		m_sAttr.iFPSMax = FPS_2000_MAX;
+		m_sAttr.iFPSMin = FPS_2000_MIN;
+		m_sAttr.iSpeedMax = SPEED_312_MAX;
+		m_sAttr.iSpeedMin = SPEED_312_MIN;
+		m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
+		m_sAttr.dCirclePoints = CICRLE_MAX_2000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_2000_NOR;
+		m_sAttr.bAngOffset = true;
+
+		m_sAttr.iFPSNor = FPS_2000_NOR;
+		m_sAttr.iSpeedNor = SPEED_312_NOR;
+	}
 	else if (m_strLidarModel == T3B)
 	{
 		m_sAttr.dAngleOffsetD = 21;
@@ -1496,94 +1513,196 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 	tsSDKSN sNewInfo;
 	memcpy(&sNewInfo, lstBuff.data(), sizeof(tsSDKSN));
 
-	if (calStartInfo((char*)lstBuff.data(), sizeof(tsSDKSN)))
+	if (sNewInfo.u16Len == 112)//D2M7
 	{
-		HCHead::eraseBuff(lstBuff, sizeof(tsSDKSN));
+		if (lstBuff.size() < sizeof(tsSDKIDD2M7))
+			return false;
 
-		char chTemp[128] = { 0 };
-		sprintf(chTemp, "%c%c",
-			sNewInfo.u8FacInfo[0], sNewInfo.u8FacInfo[1]);
-		m_strFactoryInfo = chTemp;
-
-		memset(chTemp, 0, 128);
-		if (m_bSetAngOffset) {
-			if (m_sAttr.bAngOffset && sNewInfo.u16Ang != 0xffff) {
-				m_dAngOffset = (int)sNewInfo.u16Ang * 0.01;
-				m_dAngOffset = fabs(m_dAngOffset) > 3.0 ? 0 : m_dAngOffset;
-				LOG_INFO("ZeroAngle=%0.2f\n", m_dAngOffset);
-			}
-		}
-		if(sNewInfo.u8Reserve1[0] == 0xFF)
-			sprintf(chTemp, "%c%d%c", sNewInfo.u8FacInfo[2], sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4]);
-		else
-			sprintf(chTemp, "%c%d%c%c", sNewInfo.u8FacInfo[2], sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4], sNewInfo.u8Reserve1[0]);
-
-		std::string strModel = chTemp;
-		if (strModel != m_strLidarModel)
+		tsSDKIDD2M7 sD2M7;
+		memcpy(&sD2M7, lstBuff.data(), sizeof(tsSDKIDD2M7));
+		if (calStartInfo((char*)lstBuff.data(), sizeof(tsSDKIDD2M7)))
 		{
-			LOG_WARNING("Lidar model error init:%s,device:%s\n", (char*)m_strLidarModel.c_str(), (char*)strModel.c_str());
-			//setReadCharsError(ERR_DEV_MODEL);
-			setLidarPara(chTemp);
+			HCHead::eraseBuff(lstBuff, sizeof(tsSDKIDD2M7));
+
+			char chTemp[128] = { 0 };
+			sprintf(chTemp, "%c%c",
+				sD2M7.sSN.u8FacInfo[0], sD2M7.sSN.u8FacInfo[1]);
+			m_strFactoryInfo = chTemp;
+
+			memset(chTemp, 0, 128);
+			if (m_bSetAngOffset) {
+				if (m_sAttr.bAngOffset && sD2M7.sSN.u16Ang != 0xffff) {
+					m_dAngOffset = (int)sD2M7.sSN.u16Ang * 0.01;
+					m_dAngOffset = fabs(m_dAngOffset) > 3.0 ? 0 : m_dAngOffset;
+					LOG_INFO("ZeroAngle=%0.2f\n", m_dAngOffset);
+				}
+			}
+			if (sD2M7.sSN.u8Reserve1[0] == 0xFF)
+				sprintf(chTemp, "%c%d%c", sD2M7.sSN.u8FacInfo[2], sD2M7.sSN.u8FacInfo[3], sD2M7.sSN.u8FacInfo[4]);
+			else
+				sprintf(chTemp, "%c%d%c%c", sD2M7.sSN.u8FacInfo[2], sD2M7.sSN.u8FacInfo[3], sD2M7.sSN.u8FacInfo[4], sD2M7.sSN.u8Reserve1[0]);
+
+			std::string strModel = chTemp;
+			if (strModel != m_strLidarModel)
+			{
+				LOG_WARNING("Lidar model error init:%s,device:%s\n", (char*)m_strLidarModel.c_str(), (char*)strModel.c_str());
+				//setReadCharsError(ERR_DEV_MODEL);
+				setLidarPara(chTemp);
+			}
+
+			memset(chTemp, 0, 128);
+
+			sprintf(chTemp, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
+				sD2M7.sSN.u8SN[0],
+				sD2M7.sSN.u8SN[1],
+				sD2M7.sSN.u8SN[2],
+				sD2M7.sSN.u8SN[3],
+				sD2M7.sSN.u8SN[4],
+				sD2M7.sSN.u8SN[5],
+				sD2M7.sSN.u8SN[6],
+				sD2M7.sSN.u8SN[7],
+				sD2M7.sSN.u8SN[8],
+				sD2M7.sSN.u8SN[9],
+				sD2M7.sSN.u8SN[10],
+				sD2M7.sSN.u8SN[11],
+				sD2M7.sSN.u8SN[12],
+				sD2M7.sSN.u8SN[13],
+				sD2M7.sSN.u8SN[14],
+				sD2M7.sSN.u8SN[15],
+				sD2M7.sSN.u8SN[16],
+				sD2M7.sSN.u8SN[17],
+				sD2M7.sSN.u8SN[18],
+				sD2M7.sSN.u8SN[19]);
+			//sprintf(chTemp, "%s", sNewInfo.u8SN);
+
+			//m_strDevID = chTemp;
+
+			LOG_INFO("Get SN:%s\n", chTemp);
+
+
+			memset(chTemp, 0, 128);
+			sprintf(chTemp, "00.00.%02X.%02X",
+				sD2M7.sSN.u8CalVer[0], sD2M7.sSN.u8CalVer[1]);
+
+			m_strFirmwareVer = chTemp;
+
+
+			m_bHadID = true;
+			//sendGetIDInfoSignal(true);
+
+			sendGetFactoryInfoSignal(true);
+
+
+			memcpy(&m_sPackUID, &sD2M7.sSN, sizeof(tsSDKSN));
+
+			memcpy(&m_sD2M7, &sD2M7, sizeof(tsSDKIDD2M7));
+
+
+			LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
+			return true;
 		}
+		else
+		{
+			HCHead::eraseBuff(lstBuff, sizeof(tsSDKIDD2M7));
 
-		memset(chTemp, 0, 128);
+			LOG_ERROR("New lidar factory info cal error\n");
+			setReadCharsError(ERR_START_INFO);
+			return true;
 
-		sprintf(chTemp, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
-			sNewInfo.u8SN[0],
-			sNewInfo.u8SN[1],
-			sNewInfo.u8SN[2],
-			sNewInfo.u8SN[3],
-			sNewInfo.u8SN[4],
-			sNewInfo.u8SN[5],
-			sNewInfo.u8SN[6],
-			sNewInfo.u8SN[7],
-			sNewInfo.u8SN[8],
-			sNewInfo.u8SN[9],
-			sNewInfo.u8SN[10],
-			sNewInfo.u8SN[11],
-			sNewInfo.u8SN[12],
-			sNewInfo.u8SN[13],
-			sNewInfo.u8SN[14],
-			sNewInfo.u8SN[15],
-			sNewInfo.u8SN[16],
-			sNewInfo.u8SN[17], 
-			sNewInfo.u8SN[18], 
-			sNewInfo.u8SN[19] );
-		//sprintf(chTemp, "%s", sNewInfo.u8SN);
-
-		//m_strDevID = chTemp;
-
-		LOG_INFO("Get SN:%s\n", chTemp);
-
-
-		memset(chTemp, 0, 128);
-		sprintf(chTemp, "00.00.%02X.%02X",
-			sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
-
-		m_strFirmwareVer = chTemp;
-
-
-		m_bHadID = true;
-		//sendGetIDInfoSignal(true);
-
-		sendGetFactoryInfoSignal(true);
-		
-
-		memcpy(&m_sPackUID, &sNewInfo, sizeof(tsSDKSN));
-		
-		
-		LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
-		return true;
+		}
 	}
 	else
 	{
-		HCHead::eraseBuff(lstBuff, sizeof(tsSDKSN));
+		if (calStartInfo((char*)lstBuff.data(), sizeof(tsSDKSN)))
+		{
+			HCHead::eraseBuff(lstBuff, sizeof(tsSDKSN));
 
-		LOG_ERROR("New lidar factory info cal error\n");
-		setReadCharsError(ERR_START_INFO);
-		return true;
+			char chTemp[128] = { 0 };
+			sprintf(chTemp, "%c%c",
+				sNewInfo.u8FacInfo[0], sNewInfo.u8FacInfo[1]);
+			m_strFactoryInfo = chTemp;
 
+			memset(chTemp, 0, 128);
+			if (m_bSetAngOffset) {
+				if (m_sAttr.bAngOffset && sNewInfo.u16Ang != 0xffff) {
+					m_dAngOffset = (int)sNewInfo.u16Ang * 0.01;
+					m_dAngOffset = fabs(m_dAngOffset) > 3.0 ? 0 : m_dAngOffset;
+					LOG_INFO("ZeroAngle=%0.2f\n", m_dAngOffset);
+				}
+			}
+			if (sNewInfo.u8Reserve1[0] == 0xFF)
+				sprintf(chTemp, "%c%d%c", sNewInfo.u8FacInfo[2], sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4]);
+			else
+				sprintf(chTemp, "%c%d%c%c", sNewInfo.u8FacInfo[2], sNewInfo.u8FacInfo[3], sNewInfo.u8FacInfo[4], sNewInfo.u8Reserve1[0]);
+
+			std::string strModel = chTemp;
+			if (strModel != m_strLidarModel)
+			{
+				LOG_WARNING("Lidar model error init:%s,device:%s\n", (char*)m_strLidarModel.c_str(), (char*)strModel.c_str());
+				//setReadCharsError(ERR_DEV_MODEL);
+				setLidarPara(chTemp);
+			}
+
+			memset(chTemp, 0, 128);
+
+			sprintf(chTemp, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
+				sNewInfo.u8SN[0],
+				sNewInfo.u8SN[1],
+				sNewInfo.u8SN[2],
+				sNewInfo.u8SN[3],
+				sNewInfo.u8SN[4],
+				sNewInfo.u8SN[5],
+				sNewInfo.u8SN[6],
+				sNewInfo.u8SN[7],
+				sNewInfo.u8SN[8],
+				sNewInfo.u8SN[9],
+				sNewInfo.u8SN[10],
+				sNewInfo.u8SN[11],
+				sNewInfo.u8SN[12],
+				sNewInfo.u8SN[13],
+				sNewInfo.u8SN[14],
+				sNewInfo.u8SN[15],
+				sNewInfo.u8SN[16],
+				sNewInfo.u8SN[17],
+				sNewInfo.u8SN[18],
+				sNewInfo.u8SN[19]);
+			//sprintf(chTemp, "%s", sNewInfo.u8SN);
+
+			//m_strDevID = chTemp;
+
+			LOG_INFO("Get SN:%s\n", chTemp);
+
+
+			memset(chTemp, 0, 128);
+			sprintf(chTemp, "00.00.%02X.%02X",
+				sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
+
+			m_strFirmwareVer = chTemp;
+
+
+			m_bHadID = true;
+			//sendGetIDInfoSignal(true);
+
+			sendGetFactoryInfoSignal(true);
+
+
+			memcpy(&m_sPackUID, &sNewInfo, sizeof(tsSDKSN));
+
+
+			LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
+			return true;
+		}
+		else
+		{
+			HCHead::eraseBuff(lstBuff, sizeof(tsSDKSN));
+
+			LOG_ERROR("New lidar factory info cal error\n");
+			setReadCharsError(ERR_START_INFO);
+			return true;
+
+		}
 	}
+	
     return false;
 }
 bool HCLidar::getStartInfo(std::vector<UCHAR>& lstBuff)
@@ -1708,7 +1827,7 @@ bool HCLidar::getStartInfo(std::vector<UCHAR>& lstBuff)
 			return true;
 
 		}
-	}
+	}	
 	else
 	{
 		HCHead::eraseBuff(lstBuff, sizeof(tsCmdStart));
@@ -1962,6 +2081,11 @@ bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int
 			else
 			{
 				compensate(sData.dAngle, sData.u16Dist, m_sAttr.dTheta_d, m_sAttr.dBaseline_mm);
+				if (m_strLidarModel == D2M7)
+				{
+					compensateDistSubsection(m_sD2M7.sSub, sData.u16Dist);
+				}
+				
 			}
 			sData.dAngleDisp = sData.dAngle;
 		}
@@ -2839,4 +2963,57 @@ bool HCLidar::isCheckMaxPeakLattice(int a1, int b1, int a2, int b2, int dist_mm,
 		return true;
 	}
 	return false;
+}
+
+void HCLidar::compensateDistSubsection(tsSubsection& subsection_para, UINT16 & dist)
+{
+	if (!m_bComp)
+		return;
+
+	if (dist == 0)
+	{
+		return;
+	}
+
+	if (subsection_para.n1_org == 0xFFFFFFFF || subsection_para.n2_org == 0xFFFFFFFF)
+	{
+		return;
+	}
+
+	if (subsection_para.n1_org == 0 && subsection_para.n2_org == 0)
+	{
+		return;
+	}
+
+	double dist_s;
+	double dist_temp = dist / 1000.0;
+
+	//分段距离重构
+	double cx = subsection_para.n1_org / dist_temp - subsection_para.n2_org;
+
+	if (dist_temp > subsection_para.ulower_0 && dist_temp <= subsection_para.uupper_0)
+	{
+		dist_s = subsection_para.n1_subsection_0 / (cx + subsection_para.n2_subsection_0);
+	}
+	else if (dist_temp > subsection_para.ulower_1 && dist_temp <= subsection_para.uupper_1)
+	{
+		dist_s = subsection_para.n1_subsection_1 / (cx + subsection_para.n2_subsection_1);
+	}
+	else if (dist_temp > subsection_para.ulower_2 && dist_temp <= subsection_para.uupper_2)
+	{
+		dist_s = subsection_para.n1_subsection_2 / (cx + subsection_para.n2_subsection_2);
+	}
+	else if (dist_temp > subsection_para.ulower_3 && dist_temp <= subsection_para.uupper_3)
+	{
+		dist_s = subsection_para.n1_subsection_3 / (cx + subsection_para.n2_subsection_3);
+	}
+	else if (dist_temp > subsection_para.ulower_4 && dist_temp <= subsection_para.uupper_4 + 2)
+	{
+		dist_s = subsection_para.n1_subsection_4 / (cx + subsection_para.n2_subsection_4);
+	}
+
+	if (dist_temp <= subsection_para.uupper_4 + 2)
+	{
+		dist = dist_s * 1000;
+	}
 }

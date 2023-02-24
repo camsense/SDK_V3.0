@@ -78,6 +78,8 @@ extern "C" {
 
 	void setSDKPointCloudLattice(bool bDistinguish);
 
+	void setSDKD2M7SubComp(bool bComp);
+
 #ifdef __cplusplus
 };
 #endif

@@ -183,6 +183,12 @@ public:
 
 	}
 
+	void setD2M7SubComp(bool bComp)
+	{
+		m_bComp = bComp;
+
+	}
+
 	//void setFilter(bool bfilter)
 	//{
 	//	m_bFilter = bfilter;
@@ -313,6 +319,8 @@ private:
 
 	tsPackUID                m_sPackUID;
 	bool                     m_bDistinguish = false;
+	tsSDKIDD2M7              m_sD2M7;
+	bool                     m_bComp = true;
 
 	UINT64                   m_u64CountS = 0;
     UINT64                   m_u64StartMS = 0;
@@ -389,6 +397,8 @@ private:
 
 	UINT16 getPointCloudLatticePeak(int dist_mm, UINT16 peak);
 	bool isCheckMaxPeakLattice(int a1, int b1, int a2, int b2, int dist_mm, UINT16 peak);
+
+	void compensateDistSubsection(tsSubsection& subsection_para, UINT16 & dist);
 };
 
 #endif // HCLIDAR_H

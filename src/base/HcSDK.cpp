@@ -150,6 +150,11 @@ void setSDKPointCloudLattice(bool bDistinguish)
 {
 	g_device.setPointCloudLattice(bDistinguish);
 }
+
+void setSDKD2M7SubComp(bool bComp)
+{
+	g_device.setD2M7SubComp(bComp);
+}
 //void setSDKFilter(bool bfilter)
 //{
 //	g_device.setFilter(bfilter);

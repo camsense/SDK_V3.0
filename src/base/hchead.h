@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"V3.2.23"
+#define SDK_VER                    (char*)"V3.2.23a"
 
 #define SHARK_ENABLE               0
 
@@ -64,6 +64,7 @@
 #define  D2PD                           "D2PD"
 #define  D2M1                           "D2M1"
 #define  D2AE                           "D2AE"
+#define  D2M7                           "D2M7"
 
 #define  T3B                            "T3B"
 
@@ -261,6 +262,59 @@ typedef struct tsSDKIDNew
     UCHAR        u8ID[ID_LEN];
 }tsSDKIDNew;
 
+typedef struct tsSubsection
+{
+	float n1_org;              //原始n1值
+	float n2_org;              //原始0n2值
+	UINT8 ulower_0 = 0;         //分段标定第0段阈值
+	UINT8 uupper_0 = 1;         //分段标定第0段阈值
+	UINT8 ulower_1 = 1;         //分段标定第1段阈值
+	UINT8 uupper_1 = 2;         //分段标定第1段阈值
+	UINT8 ulower_2 = 2;         //分段标定第2段阈值
+	UINT8 uupper_2 = 4;         //分段标定第2段阈值
+	UINT8 ulower_3 = 4;         //分段标定第3段阈值
+	UINT8 uupper_3 = 6;         //分段标定第3段阈值
+	UINT8 ulower_4 = 6;         //分段标定第4段阈值
+	UINT8 uupper_4 = 8;         //分段标定第4段阈值
+	float n1_subsection_0;     //分段标定第0段n1值  
+	float n2_subsection_0;     //分段标定第0段n2值
+	float n1_subsection_1;     //分段标定第1段n1值  
+	float n2_subsection_1;     //分段标定第1段n2值
+	float n1_subsection_2;     //分段标定第2段n1值
+	float n2_subsection_2;     //分段标定第2段n2值
+	float n1_subsection_3;     //分段标定第3段n1值
+	float n2_subsection_3;     //分段标定第3段n2值
+	float n1_subsection_4;     //分段标定第4段n1值
+	float n2_subsection_4;     //分段标定第4段n2值
+	void reset()
+	{
+		n1_org = 0;
+		n2_org = 0;
+		ulower_0 = 0;
+		uupper_0 = 1;
+		ulower_1 = 1;
+		uupper_1 = 2;
+		ulower_2 = 2;
+		uupper_2 = 4;
+		ulower_3 = 4;
+		uupper_3 = 6;
+		ulower_4 = 6;
+		uupper_4 = 8;
+		n1_subsection_0 = 0;
+		n2_subsection_0 = 0;
+		n1_subsection_1 = 0;
+		n2_subsection_1 = 0;
+		n1_subsection_2 = 0;
+		n2_subsection_2 = 0;
+		n1_subsection_3 = 0;
+		n2_subsection_3 = 0;
+		n1_subsection_4 = 0;
+		n2_subsection_4 = 0;
+	}
+
+}tsSubsection;
+
+
 
 typedef struct tsSDKSN
 {
@@ -282,6 +336,11 @@ typedef struct tsSDKSN
 	UCHAR        u8SN[20];
 }tsSDKSN;
 
+typedef struct tsSDKIDD2M7
+{
+	tsSDKSN           sSN;
+	tsSubsection      sSub;
+}tsSDKIDD2M7;
 
 typedef struct tsPackUID
 {

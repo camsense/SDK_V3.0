@@ -66,8 +66,8 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 	outFile.open(strFile, std::ios::app);
 
 	char buff[128] = { 0 };
-	sprintf(buff, "---------------Size=%d\n", lstG.size());
-	printf(buff);
+	//sprintf(buff, "---------------Size=%d\n", lstG.size());
+	//printf(buff);
 
     for(auto sInfo : lstG)
     {
@@ -256,7 +256,7 @@ int main()
 
     int rtn = 0;
 
-    bool bPollMode = false;//点云获取分轮询模式、回调模式
+    bool bPollMode = true;//点云获取分轮询模式、回调模式
     bool bLoop = false;
 
 	std::string strVer = getSDKVersion();
@@ -335,7 +335,7 @@ int main()
 	printf( "Main: Lidar model:%s\n" , getSDKLidarModel() );
 
 	
-
+	UINT64 u64LastTimeNs = HCHead::getCurrentTimestampNs();
 	int iCount = 0;
 	//LidarTest  *lidarTest = nullptr;
     while (true)
@@ -352,6 +352,15 @@ int main()
 				{
 					//过滤杂点、射线
 					//filterPointCloud(lstG, strLidarModel.c_str());
+
+					UINT64 u64CurrentTimeNs = HCHead::getCurrentTimestampNs();
+					double fDeltaMs = (u64CurrentTimeNs - u64LastTimeNs)/1e6;
+					u64LastTimeNs = u64CurrentTimeNs;
+
+					printf("Main: Delta time=%f\n", fDeltaMs);
+
+					if(fDeltaMs>500.0)
+						printf("Main: -----------------------------------------------\n");
 
 					sdkCallBackFunPointCloud(lstG);
 
