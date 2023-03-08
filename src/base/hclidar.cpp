@@ -2031,7 +2031,7 @@ bool HCLidar::parserRangeEX(LstPointCloud &resultRange, const char * chBuff, int
 
 
 		tsPointCloud sData;
-		sData.u64TimeStampNs = epochTime - u64Inter *(in_numData-i);
+		sData.u64TimeStampNs = epochTime - u64Inter *(in_numData-1-i);
 		//LOG_INFO("TS:%lld\n", sData.u64TimeStampNs);
 
 		memcpy(data, (UCHAR*)chBuff + pre_bytes + i * data_size, sizeof(UCHAR) * data_size);

@@ -55,7 +55,7 @@ void sdkCallBackFunSecondInfo(tsSDKStatistic sInfo)
 
 void sdkCallBackFunPointCloud(LstPointCloud lstG)
 {
- 
+
 	std::string strFile = "";
 	if (g_strLidarID.size() > DEFAULT_ID_LEN)
 		strFile = "Raw_" + g_strLidarID.substr(g_strLidarID.size() - DEFAULT_ID_LEN, DEFAULT_ID_LEN) + ".csv";
@@ -76,7 +76,14 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 
 			memset(buff, 0, 128);
 			sprintf(buff, "%lld,%0.3f,%0.3f,%d,%d,%d,%d\n",
-				sInfo.u64TimeStampNs, sInfo.dAngle, sInfo.dAngleRaw, sInfo.u16Dist, sInfo.bValid, sInfo.u16Speed, sInfo.u16Gray);
+				sInfo.u64TimeStampNs, 
+				sInfo.dAngle, 
+				sInfo.dAngleRaw, 
+				sInfo.u16Dist,
+				sInfo.bValid,
+				sInfo.u16Speed, 
+				sInfo.u16Gray);
+
 
 			outFile.write(buff, strlen(buff));
 
