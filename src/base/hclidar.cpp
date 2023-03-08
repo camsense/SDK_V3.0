@@ -2862,6 +2862,20 @@ void HCLidar::setLidarLowSpeed(bool bLow)
 			m_sAttr.dCirclePoints = CICRLE_MAX_2000_3HZ;
 
 		}
+		else if (m_strLidarModel == D2PD)
+		{
+			if (m_sAttr.dAngleStep != ANGLE_RESOLV_2000_3HZ)
+			{
+				m_bCheckSpeed = true;
+				m_u64StartTimeCheckSpeed = HCHead::getCurrentTimestampUs();
+			}
+
+			m_sAttr.iSpeedMax = SPEED_180_MAX;
+			m_sAttr.iSpeedMin = SPEED_180_MIN;
+			m_sAttr.dAngleStep = ANGLE_RESOLV_2000_3HZ;
+			m_sAttr.dCirclePoints = CICRLE_MAX_2000_3HZ;
+
+		}
 		
 	}
 	else
@@ -2909,6 +2923,20 @@ void HCLidar::setLidarLowSpeed(bool bLow)
 			m_sAttr.iSpeedMin = SPEED_360_MIN;
 			m_sAttr.dAngleStep = ANGLE_RESOLV_2000_6HZ;
 			m_sAttr.dCirclePoints = CICRLE_MAX_2000_6HZ;
+
+		}
+		else if (m_strLidarModel == D2PD)
+		{
+			if (m_sAttr.dAngleStep != ANGLE_RESOLV_2000)
+			{
+				m_bCheckSpeed = true;
+				m_u64StartTimeCheckSpeed = HCHead::getCurrentTimestampUs();
+			}
+
+			m_sAttr.iSpeedMax = SPEED_312_MAX;
+			m_sAttr.iSpeedMin = SPEED_312_MIN;
+			m_sAttr.dAngleStep = ANGLE_RESOLV_2000;
+			m_sAttr.dCirclePoints = CICRLE_MAX_2000;
 
 		}
 	}
