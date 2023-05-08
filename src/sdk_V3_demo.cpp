@@ -335,11 +335,7 @@ int main()
 	g_strLidarID = getSDKLidarID();
 	
 	
-	printf( "Lidar ID=%s\n" , getSDKLidarID());
-	printf( "Factory Info:%s\n" , getSDKFactoryInfo());
-	printf( "Main: Firmware ver:%s\n", getSDKFirmwareVersion() );
-	printf( "Main: Hardware ver:%s\n", getSDKHardwareVersion());
-	printf( "Main: Lidar model:%s\n" , getSDKLidarModel() );
+	printf( "Main:Lidar ID=%s\n" , getSDKLidarID());
 
 	
 	UINT64 u64LastTimeNs = HCHead::getCurrentTimestampNs();

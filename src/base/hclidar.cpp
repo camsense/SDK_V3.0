@@ -1327,6 +1327,8 @@ bool HCLidar::calIDX1(char* ch,int iLen)
 
 bool HCLidar::getDevID(std::vector<UCHAR>& lstBuff)
 {
+	LOG_INFO("getDevID!\n");
+
 	char chTemp[128] = { 0 };
 	if (m_strLidarModel == "X1S")//rock
 	{
@@ -1377,11 +1379,11 @@ bool HCLidar::getDevID(std::vector<UCHAR>& lstBuff)
 			LOG_INFO(chTemp);
 
 
-			memset(chTemp, 0, 128);
+			/*memset(chTemp, 0, 128);
 			sprintf(chTemp, "00.00.%02X.%02X",
 				(lds.sAttr.u16Version & 0xFF00) >> 8, lds.sAttr.u16Version & 0x00FF);
 
-			m_strFirmwareVer = chTemp;
+			m_strFirmwareVer = chTemp;*/
 
 			sendGetFactoryInfoSignal(true);
 
@@ -1414,12 +1416,12 @@ bool HCLidar::getDevID(std::vector<UCHAR>& lstBuff)
             m_strDevID = chTemp;
 
 
-            memset(chTemp,0,128);
+            /*memset(chTemp,0,128);
             sprintf(chTemp, "00.%02X.%02X.%02X",
                                 sID.u8Ver[0], sID.u8Ver[1], sID.u8Ver[2]);
 
             m_strFirmwareVer = chTemp;
-
+*/
 
 			LOG_INFO("Get ID ok!\n");
             //sendGetIDInfoSignal(true);
@@ -1573,22 +1575,19 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 				sD2M7.sSN.u8SN[17],
 				sD2M7.sSN.u8SN[18],
 				sD2M7.sSN.u8SN[19]);
-			//sprintf(chTemp, "%s", sNewInfo.u8SN);
 
-			//m_strDevID = chTemp;
 
 			LOG_INFO("Get SN:%s\n", chTemp);
 
 
-			memset(chTemp, 0, 128);
-			sprintf(chTemp, "00.00.%02X.%02X",
-				sD2M7.sSN.u8CalVer[0], sD2M7.sSN.u8CalVer[1]);
+			//memset(chTemp, 0, 128);
+			//sprintf(chTemp, "00.00.%02X.%02X",
+			//	sD2M7.sSN.u8CalVer[0], sD2M7.sSN.u8CalVer[1]);
 
-			m_strFirmwareVer = chTemp;
+			//m_strFirmwareVer = chTemp;
 
 
 			m_bHadID = true;
-			//sendGetIDInfoSignal(true);
 
 			sendGetFactoryInfoSignal(true);
 
@@ -1598,7 +1597,7 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 			memcpy(&m_sD2M7, &sD2M7, sizeof(tsSDKIDD2M7));
 
 
-			LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
+			//LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
 			return true;
 		}
 		else
@@ -1666,18 +1665,16 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 				sNewInfo.u8SN[17],
 				sNewInfo.u8SN[18],
 				sNewInfo.u8SN[19]);
-			//sprintf(chTemp, "%s", sNewInfo.u8SN);
 
-			//m_strDevID = chTemp;
 
 			LOG_INFO("Get SN:%s\n", chTemp);
 
 
-			memset(chTemp, 0, 128);
-			sprintf(chTemp, "00.00.%02X.%02X",
-				sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
+			//memset(chTemp, 0, 128);
+			//sprintf(chTemp, "00.00.%02X.%02X",
+			//	sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
 
-			m_strFirmwareVer = chTemp;
+			//m_strFirmwareVer = chTemp;
 
 
 			m_bHadID = true;
@@ -1689,7 +1686,7 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 			memcpy(&m_sPackUID, &sNewInfo, sizeof(tsSDKSN));
 
 
-			LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
+			//LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
 			return true;
 		}
 		else
@@ -1798,24 +1795,24 @@ bool HCLidar::getStartInfo(std::vector<UCHAR>& lstBuff)
 			LOG_INFO("Get ID ok ID:%s\n", chTemp);
 
 
-			memset(chTemp, 0, 128);
-			sprintf(chTemp, "00.00.%02X.%02X",
-				sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
+			//memset(chTemp, 0, 128);
+			//sprintf(chTemp, "00.00.%02X.%02X",
+			//	sNewInfo.u8CalVer[0], sNewInfo.u8CalVer[1]);
 
-			m_strFirmwareVer = chTemp;
+			//m_strFirmwareVer = chTemp;
 
 
-			memset(chTemp, 0, 128);
-			sprintf(chTemp, "00.%02X.%02X.%02X",
-				sNewInfo.u8HardVer[0], sNewInfo.u8HardVer[1], sNewInfo.u8HardVer[2]);
+			//memset(chTemp, 0, 128);
+			//sprintf(chTemp, "00.%02X.%02X.%02X",
+			//	sNewInfo.u8HardVer[0], sNewInfo.u8HardVer[1], sNewInfo.u8HardVer[2]);
 
-			m_strHardwareVer = chTemp;
+			//m_strHardwareVer = chTemp;
 
 			m_bHadID = true;
 			//sendGetIDInfoSignal(true);
 
 			sendGetFactoryInfoSignal(true);
-			LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
+			//LOG_INFO("New lidar factory info:%s,Hardware ver:%s\n", (char*)m_strFactoryInfo.c_str(), (char*)m_strHardwareVer.c_str());
 			return true;
 		}
 		else
