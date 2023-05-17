@@ -77,7 +77,7 @@ typedef struct tsSDKPara
 		iCoverPoints = 100;
 		iPollBuffSize = 5000;
 		iCallbackBuffSize = 50;
-		iCirclesBuffSize = 3;
+		iCirclesBuffSize = 12;
 		iChangeSpeedMS = 2500;
 		iMinBlockSpeed = 80;
 	}
