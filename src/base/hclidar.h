@@ -304,6 +304,7 @@ private:
     UINT64                   m_u64StartTimeSharkBlock=0;
     int                      m_iSharkBlockCount=0;
     UINT64                   m_u64StartTimeInvalidPoints=0;
+	int                      m_iInvalidPointsCount = 0;
     int                      m_iValidNumber = 0;
 	UINT64                   m_u64StartTimeFindPackHeader = 0;
 	UINT64                   m_u64StartTimeCheckSpeed = 0;

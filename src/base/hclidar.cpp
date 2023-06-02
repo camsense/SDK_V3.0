@@ -899,7 +899,8 @@ void HCLidar::readData()
 			if (m_u64StartTimeNoData > 0)
 			{
 				UINT64 endTime = HCHead::getCurrentTimestampUs();
-				if ((endTime - m_u64StartTimeNoData) >= m_sSDKPara.iNoDataMS * 1000)
+				//if ((endTime - m_u64StartTimeNoData) >= m_sSDKPara.iNoDataMS * 1000)
+				if (endTime >= (m_u64StartTimeNoData+m_sSDKPara.iNoDataMS * 1000))
 				{
 					LOG_WARNING("Lidar read timeout!\n");
 
@@ -988,9 +989,10 @@ void HCLidar::threadParse()
 		if (!m_bInitTimeout)
 		{
 			UINT64 u64End = HCHead::getCurrentTimestampUs();
-			UINT64 u64Int = (u64End - u64Start) / 1000;
+			//UINT64 u64Int = (u64End - u64Start) / 1000;
 
-			if (u64Int >= m_iWaitIDTimeMs)
+			//if (u64Int >= m_iWaitIDTimeMs)
+			if (u64End >= (u64Start + m_iWaitIDTimeMs* 1000))
 			{
 				if (!m_bHadID && !m_bGetIDTimeOut)
 				{
@@ -1279,9 +1281,10 @@ void HCLidar::checkFindPackHeader()
 		if (m_u64StartTimeFindPackHeader > 0)
 		{
 			UINT64 u64Temp = HCHead::getCurrentTimestampUs();
-			UINT64 u64Int = u64Temp - m_u64StartTimeFindPackHeader;
+			//UINT64 u64Int = u64Temp - m_u64StartTimeFindPackHeader;
 
-			if (u64Int >= 100000) //100ms
+			//if (u64Int >= 100000) //100ms
+			if (u64Temp >= (m_u64StartTimeFindPackHeader+100000)) //100ms
 			{
 				m_u64StartTimeFindPackHeader = 0;
 				setReadCharsError(ERR_FIND_HEAD_TIMEOUT);
@@ -2343,7 +2346,8 @@ void HCLidar::checkInvalidLowSpeed(UINT16 u16Speed)
         if (m_u64StartTimeLowSpeed != 0)
         {
             UINT64 endTime = HCHead::getCurrentTimestampUs();
-            if ((endTime - m_u64StartTimeLowSpeed) >= m_sSDKPara.iSpeedContinueMS*1000)
+            //if ((endTime - m_u64StartTimeLowSpeed) >= m_sSDKPara.iSpeedContinueMS*1000)
+			if (endTime >= (m_u64StartTimeLowSpeed + m_sSDKPara.iSpeedContinueMS * 1000))
             {
                 setReadCharsError(ERR_LIDAR_SPEED_LOW);
                 m_u64StartTimeLowSpeed = 0;
@@ -2369,7 +2373,8 @@ void HCLidar::checkInvalidHighSpeed(UINT16 u16Speed)
         if (m_u64StartTimeHighSpeed != 0)
         {
             int64_t endTime = HCHead::getCurrentTimestampUs();
-            if ((endTime - m_u64StartTimeHighSpeed) >= m_sSDKPara.iSpeedContinueMS*1000)
+            //if ((endTime - m_u64StartTimeHighSpeed) >= m_sSDKPara.iSpeedContinueMS*1000)
+			if (endTime   >= (m_u64StartTimeHighSpeed + m_sSDKPara.iSpeedContinueMS * 1000))
             {
                 setReadCharsError( ERR_LIDAR_SPEED_HIGH);
                 m_u64StartTimeHighSpeed = 0;
@@ -2394,7 +2399,8 @@ void HCLidar::checkEncoderError(UINT16 u16Speed)
 		if (m_u64StartTimeSpeed != 0)
 		{
 			UINT64 endTime = HCHead::getCurrentTimestampUs();
-			if ((u16Speed != m_u16Speed) && (endTime - m_u64StartTimeSpeed) <= ENCODER_ERROR_TIME_MS*1000)
+			//if ((u16Speed != m_u16Speed) && (endTime - m_u64StartTimeSpeed) <= ENCODER_ERROR_TIME_MS*1000)
+			if ((u16Speed != m_u16Speed) && (endTime  <= (m_u64StartTimeSpeed+ENCODER_ERROR_TIME_MS * 1000)))
 			{
 				if (m_sStatistic.u64CurrentS > ENCODER_ERROR_SECOND)
 				{
@@ -2490,10 +2496,14 @@ void HCLidar::checkSharkInvalidPoints(tsPointCloud& sData)
 {
     if (!sData.bValid)
     {
+		m_iInvalidPointsCount++;
         if (m_u64StartTimeInvalidPoints != 0)
         {
             int64_t endTime = HCHead::getCurrentTimestampUs();
-            if ((endTime - m_u64StartTimeInvalidPoints) >= m_sSDKPara.iCoverContinueMS*1000)
+			int iTemp = m_sSDKPara.iCoverContinueMS / 1000;
+            //if ((endTime - m_u64StartTimeInvalidPoints) >= m_sSDKPara.iCoverContinueMS*1000 && m_iInvalidPointsCount> m_sAttr.iFPSNor*iTemp)
+
+			if ((endTime  >= (m_u64StartTimeInvalidPoints + m_sSDKPara.iCoverContinueMS * 1000 )) && (m_iInvalidPointsCount > m_sAttr.iFPSNor*iTemp))
             {
                 setReadCharsError( ERR_SHARK_INVALID_POINTS);
                 m_u64StartTimeInvalidPoints = 0;
@@ -2507,6 +2517,7 @@ void HCLidar::checkSharkInvalidPoints(tsPointCloud& sData)
     else
     {
         m_u64StartTimeInvalidPoints = 0;
+		m_iInvalidPointsCount = 0;
     }
 }
 
@@ -2655,9 +2666,10 @@ bool HCLidar::getErrorCode(int iError, int iMs)
 	{
 		UINT64 u64TS = it->second;
 		UINT64 u64EndUs = HCHead::getCurrentTimestampUs();
-		UINT64 u64Int = u64EndUs - u64TS;
+		//UINT64 u64Int = u64EndUs - u64TS;
 
-		if (u64Int <= iMs*1000)
+		//if (u64Int <= iMs*1000)
+		if (u64EndUs <= (u64TS + iMs * 1000))
 		{
 			return true;
 		}
@@ -2755,9 +2767,10 @@ void HCLidar::checkChangeSpeed()
 	}
 
 	UINT64 endTime = HCHead::getCurrentTimestampUs();
-	UINT64 u64Temp = endTime - m_u64StartTimeCheckSpeed;
+	//UINT64 u64Temp = endTime - m_u64StartTimeCheckSpeed;
 
-	if (u64Temp >= (m_sSDKPara.iChangeSpeedMS ) * 1000) //2.5S
+	//if (u64Temp >= (m_sSDKPara.iChangeSpeedMS ) * 1000) //2.5S
+	if (endTime >= (m_u64StartTimeCheckSpeed +m_sSDKPara.iChangeSpeedMS * 1000)) //2.5S
 	{
 		if (m_iCheckSpeedCount>10)
 		{
@@ -2807,6 +2820,7 @@ void HCLidar::resetParam()
 	m_iValidNumber = 0;
 	m_u64checkBlockSpeed = 0;
 	m_iLastErrorCode = 0;
+	m_iInvalidPointsCount = 0;
 }
 
 
