@@ -681,6 +681,23 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 		m_sAttr.iFPSNor = FPS_2000_NOR;
 		m_sAttr.iSpeedNor = SPEED_312_NOR;
 	}
+	else if (m_strLidarModel == D3M8)
+	{
+		m_sAttr.dAngleOffsetD = 28.5;
+		m_sAttr.dBaseline_mm = 17;
+		m_sAttr.dTheta_d = 0;
+		m_sAttr.iFPSMax = FPS_4000_MAX;
+		m_sAttr.iFPSMin = FPS_4000_MIN;
+		m_sAttr.iSpeedMax = SPEED_312_MAX;
+		m_sAttr.iSpeedMin = SPEED_312_MIN;
+		m_sAttr.dAngleStep = ANGLE_RESOLV_4000;
+		m_sAttr.dCirclePoints = CICRLE_MAX_4000;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_4000_NOR;
+		m_sAttr.bAngOffset = true;
+
+		m_sAttr.iFPSNor = FPS_4000_NOR;
+		m_sAttr.iSpeedNor = SPEED_312_NOR;
+	}
 	else if (m_strLidarModel == T3B)
 	{
 		m_sAttr.dAngleOffsetD = 21;
@@ -1537,7 +1554,7 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 			memset(chTemp, 0, 128);
 			if (m_bSetAngOffset) {
 				if (m_sAttr.bAngOffset && sD2M7.sSN.u16Ang != 0xffff) {
-					m_dAngOffset = (int)sD2M7.sSN.u16Ang * 0.01;
+					m_dAngOffset = (short)sD2M7.sSN.u16Ang * 0.01;
 					m_dAngOffset = fabs(m_dAngOffset) > 3.0 ? 0 : m_dAngOffset;
 					LOG_INFO("ZeroAngle=%0.2f\n", m_dAngOffset);
 				}
@@ -1627,7 +1644,7 @@ bool HCLidar::getNewSNInfo(std::vector<UCHAR>& lstBuff)
 			memset(chTemp, 0, 128);
 			if (m_bSetAngOffset) {
 				if (m_sAttr.bAngOffset && sNewInfo.u16Ang != 0xffff) {
-					m_dAngOffset = (int)sNewInfo.u16Ang * 0.01;
+					m_dAngOffset = (short)sNewInfo.u16Ang * 0.01;
 					m_dAngOffset = fabs(m_dAngOffset) > 3.0 ? 0 : m_dAngOffset;
 					LOG_INFO("ZeroAngle=%0.2f\n", m_dAngOffset);
 				}

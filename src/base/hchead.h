@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"V3.2.25"
+#define SDK_VER                    (char*)"V3.2.26"
 
 #define SHARK_ENABLE               0
 
@@ -65,7 +65,10 @@
 #define  D2M1                           "D2M1"
 #define  D2AE                           "D2AE"
 #define  D2M7                           "D2M7"
+#define  D3M8                           "D3M8"
 
+
+//#define  T2A1                           "T2A1"
 #define  T3B                            "T3B"
 
 #define  PI_HC                          3.141592653589793
@@ -97,10 +100,12 @@
 #define  FPS_1800_NOR                   1800
 #define  FPS_2000_NOR                   2088 //2088  // 2100
 #define  FPS_3000_NOR                   3048 //3012 
+#define  FPS_4000_NOR                   4000 //
 #define  FPS_TOF_NOR                    3300
 #define  FPS_1800_RANGE                 50
 #define  FPS_2000_RANGE                 100
 #define  FPS_3000_RANGE                 100
+#define  FPS_4000_RANGE                 100
 #define  FPS_TOF_RANGE                  200
 #define  FPS_1800_MAX                   (FPS_1800_NOR+FPS_1800_RANGE)
 #define  FPS_1800_MIN                   (FPS_1800_NOR-FPS_1800_RANGE)
@@ -110,6 +115,8 @@
 #define  FPS_3000_MIN                   (FPS_3000_NOR-FPS_3000_RANGE)
 #define  FPS_TOF_MAX                    (FPS_TOF_NOR+FPS_TOF_RANGE)
 #define  FPS_TOF_MIN                    (FPS_TOF_NOR-FPS_TOF_RANGE)
+#define  FPS_4000_MAX                   (FPS_4000_NOR+FPS_4000_RANGE)
+#define  FPS_4000_MIN                   (FPS_4000_NOR-FPS_4000_RANGE)
 
 #define  ANGLE_RESOLV_1800              1.09
 #define  ANGLE_RESOLV_2000              0.92  //0.92
@@ -118,6 +125,8 @@
 #define  ANGLE_RESOLV_TOF               0.7
 #define  ANGLE_RESOLV_NARWAL_NOR        0.65 //
 #define  ANGLE_RESOLV_NARWAL_LOW        0.55 //
+
+#define  ANGLE_RESOLV_4000              0.48  //0.468
 
 #define  ANGLE_RESOLV_2000_3HZ          0.52  
 #define  ANGLE_RESOLV_3000_3HZ          0.36
@@ -133,6 +142,7 @@
 #define  CICRLE_MAX_NARWAL_LOW          760  // 4.2hz   727
 #define  CICRLE_MAX_2000_3HZ            700  // 3hz
 #define  CICRLE_MAX_3000_3HZ            1015  // 3hz
+#define  CICRLE_MAX_4000                785  // 5.2hz
 
 #define  SPEED_180_NOR                  180
 #define  SPEED_250_NOR                  250
