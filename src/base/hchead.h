@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"V3.2.27"
+#define SDK_VER                    (char*)"V3.2.28"
 
 #define SHARK_ENABLE               0
 
@@ -70,6 +70,7 @@
 #define  D2CM                           "D2CM"
 #define  D2AC                           "D2AC"
 #define  D2AG                           "D2AG"
+#define  D2MK                           "D2MK"
 
 //#define  T2A1                           "T2A1"
 #define  T3B                            "T3B"
