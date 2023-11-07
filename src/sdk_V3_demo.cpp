@@ -360,7 +360,7 @@ int main()
 					double fDeltaMs = (u64CurrentTimeNs - u64LastTimeNs)/1e6;
 					u64LastTimeNs = u64CurrentTimeNs;
 
-					printf("Main: Delta time=%f\n", fDeltaMs);
+					//printf("Main: Delta time=%f\n", fDeltaMs);
 
 					if(fDeltaMs>500.0)
 						printf("Main: -----------------------------------------------\n");

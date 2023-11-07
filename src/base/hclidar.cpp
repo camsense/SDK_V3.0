@@ -1075,6 +1075,8 @@ void HCLidar::threadParse()
 
     while (m_bScanning)
     {
+		checkReadPacketData();
+
         {
             std::lock_guard<std::mutex> lock(m_mtxBuff);
             if(m_lstTemp.size()>0)
@@ -1087,7 +1089,7 @@ void HCLidar::threadParse()
 
         }
 
-        
+		
 		if (!m_bInitTimeout)
 		{
 			UINT64 u64End = HCHead::getCurrentTimestampUs();
@@ -1142,7 +1144,7 @@ void HCLidar::threadParse()
             
         }
 
-		checkReadPacketData();
+		
 
 		checkChangeSpeed();
 
