@@ -469,6 +469,16 @@ typedef struct tsPointCloud
 
 #pragma pack(pop)
 
+typedef struct tsXY
+{
+	double    fX;
+	double    fY;
+	tsXY()
+	{
+		fX = 0;
+		fY = 0;
+	}
+}tsXY;
 
 class HCHead
 {
@@ -489,6 +499,9 @@ public:
 	static float uint6_cov_float(UINT16 value);
 
 	static UINT16 float_cov_uint16(float value);
+
+	//static double polarLeastSquares(const std::vector<tsXY> &lstPoints);
+	static bool lineFit(const std::vector<tsXY> &lstPoints, double &a, double &b, double &c);
 };
 
 bool nodeComparator(const tsNodeInfo& s1, const tsNodeInfo& s2);

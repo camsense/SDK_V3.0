@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(${CAMSENSE_SOURCE_DIR}/src/toolkit)
 LINK_DIRECTORIES(${CAMSENSE_SOURCE_DIR}/src/base)
 LINK_DIRECTORIES(${CAMSENSE_SOURCE_DIR}/src/toolkit)
 
+
 INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/dep
     ${PROJECT_SOURCE_DIR}/dep/eigen3
@@ -25,6 +26,11 @@ ADD_SUBDIRECTORY(toolkit)
 ADD_EXECUTABLE (sdk_V3_demo sdk_V3_demo.cpp LidarTest.cpp)
 TARGET_LINK_LIBRARIES (sdk_V3_demo lidar lidar_toolkit)
 
+#if (MSVC)
+ADD_EXECUTABLE (sdk_Calib_demo sdk_Calib_demo.cpp LidarTest.cpp)
+TARGET_LINK_LIBRARIES (sdk_Calib_demo lidar lidar_toolkit)
+#endif (MSVC)
+
 #ADD_EXECUTABLE (sdk_scanData sdk_scanData.cpp)
 #TARGET_LINK_LIBRARIES (sdk_scanData lidar)
 
@@ -33,6 +39,7 @@ TARGET_LINK_LIBRARIES (sdk_V3_demo lidar lidar_toolkit)
 
 #ADD_EXECUTABLE (hc_test hc_test.cpp LidarTest.cpp)
 #TARGET_LINK_LIBRARIES (hc_test lidar)
+
 #if(UNIX)
 
 #if(CMAKE_TOOLCHAIN_FILE)

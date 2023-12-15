@@ -147,3 +147,41 @@ UINT16 HCHead::float_cov_uint16(float value)
 
 	return out;
 }
+
+
+bool HCHead::lineFit(const std::vector<tsXY> &lstPoints, double &a, double &b, double &c)
+{
+	int size = lstPoints.size();
+	if (size < 2)
+	{
+		a = 0;
+		b = 0;
+		c = 0;
+		return false;
+	}
+	double x_mean = 0;
+	double y_mean = 0;
+	//for (int i = 0; i < size; i++)
+	for (auto& sInfo : lstPoints)
+	{
+		x_mean += sInfo.fX;
+		y_mean += sInfo.fY;
+	}
+	x_mean /= size;
+	y_mean /= size; //至此，计算出了 x y 的均值
+
+	double Dxx = 0, Dxy = 0, Dyy = 0;
+
+	for (auto& sInfo : lstPoints)//for (int i = 0; i < size; i++)
+	{
+		Dxx += (sInfo.fX - x_mean) * (sInfo.fX - x_mean);
+		Dxy += (sInfo.fX - x_mean) * (sInfo.fY - y_mean);
+		Dyy += (sInfo.fY - y_mean) * (sInfo.fY - y_mean);
+	}
+	double lambda = ((Dxx + Dyy) - sqrt((Dxx - Dyy) * (Dxx - Dyy) + 4 * Dxy * Dxy)) / 2.0;
+	double den = sqrt(Dxy * Dxy + (lambda - Dxx) * (lambda - Dxx));
+	a = Dxy / den;
+	b = (lambda - Dxx) / den;
+	c = -a * x_mean - b * y_mean;
+	return true;
+}
