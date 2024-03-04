@@ -52,7 +52,7 @@ void sdkCallBackFunSecondInfo(tsSDKStatistic sInfo)
 	outFile.write(buff, strlen(buff));
 	outFile.close();
 
-	printf(buff);
+	//printf(buff);
 	
 }
 
@@ -91,8 +91,11 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 
 			outFile.write(buff, strlen(buff));
 
+			
 			if (!sInfo.bValid)
 				continue;
+
+
 			//  采集170  -  190 度方向数据，直线拟合，
 			if (sInfo.dAngle > 170.0 && sInfo.dAngle < 190.0)
 			{
@@ -135,7 +138,7 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 	double dSum = std::accumulate(g_lstZeroAngle.begin(), g_lstZeroAngle.end(),0.0);
 	double dMean = dSum / g_lstZeroAngle.size();
 
-	std::cout << "Slope: " << fTheta << ", Yaw=" << fZeroAngle << ",Yaw mean=" << dMean << std::endl;
+	//std::cout << "Slope: " << fTheta << ", Yaw=" << fZeroAngle << ",Yaw mean=" << dMean << std::endl;
 }
 
 
