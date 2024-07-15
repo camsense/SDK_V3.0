@@ -834,6 +834,23 @@ bool HCLidar::setLidarPara(const char* chLidarModel)
 	m_sAttr.iFPSNor = FPS_2000_NOR;
 	m_sAttr.iSpeedNor = SPEED_312_NOR;
 	}
+	else if (m_strLidarModel == D3AN)
+	{
+		m_sAttr.dAngleOffsetD = 28.5;
+		m_sAttr.dBaseline_mm = 17;
+		m_sAttr.dTheta_d = 0;
+		m_sAttr.iFPSMax = FPS_4000_MAX;
+		m_sAttr.iFPSMin = FPS_4000_MIN;
+		m_sAttr.iSpeedMax = SPEED_480_MAX;
+		m_sAttr.iSpeedMin = SPEED_480_MIN;
+		m_sAttr.dAngleStep = 360.0 * SPEED_480_NOR / 60 / FPS_4000_NOR;
+		m_sAttr.dCirclePoints = FPS_4000_NOR * 60 / SPEED_480_NOR;
+		m_sAttr.u64TSStepNs = 1e9 / FPS_4000_NOR;
+		m_sAttr.bAngOffset = true;
+
+		m_sAttr.iFPSNor = FPS_4000_NOR;
+		m_sAttr.iSpeedNor = SPEED_480_NOR;
+	}
 	else if (m_strLidarModel == T3B)
 	{
 		m_sAttr.dAngleOffsetD = 21;
@@ -1393,7 +1410,11 @@ bool HCLidar::processData()
     }
     if(iIndex < 0)
     {
-		//LOG_INFO("HCSDK Error: rx data not mes header\n" );
+		if (((UCHAR)m_lstBuff.at(m_lstBuff.size() - 1) == 0x55) || ((UCHAR)m_lstBuff.at(m_lstBuff.size() - 1) == 0xAA))
+		{
+			LOG_INFO("HCSDK Error: find mes header,buff size=%d, erase len=%d\n", m_lstBuff.size(), iIndex);
+			return false;
+		}
         m_lstBuff.clear();
 		
 		checkFindPackHeader();

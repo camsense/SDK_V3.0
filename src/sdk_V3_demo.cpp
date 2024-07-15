@@ -57,17 +57,17 @@ void sdkCallBackFunPointCloud(LstPointCloud lstG)
 {
 
 	std::string strFile = "";
-	if (g_strLidarID.size() > DEFAULT_ID_LEN)
-		strFile = "Raw_" + g_strLidarID.substr(g_strLidarID.size() - DEFAULT_ID_LEN, DEFAULT_ID_LEN) + ".csv";
-	else
-		strFile = "Raw_" + g_strLidarID + ".csv";
+	//if (g_strLidarID.size() > DEFAULT_ID_LEN)
+		//strFile = "Raw_" + g_strLidarID.substr(g_strLidarID.size() - DEFAULT_ID_LEN, DEFAULT_ID_LEN) + ".csv";
+	//else
+		strFile = "Raw_.csv";
 
 	std::ofstream outFile;
 	outFile.open(strFile, std::ios::app);
 
 	char buff[128] = { 0 };
-	//sprintf(buff, "---------------Size=%d\n", lstG.size());
-	//printf(buff);
+	sprintf(buff, "---------------Size=%d\n", lstG.size());
+	printf(buff);
 
     for(auto sInfo : lstG)
     {

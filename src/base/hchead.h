@@ -13,7 +13,7 @@
 
 #include "HcData.h"
 
-#define SDK_VER                    (char*)"V3.2.31"
+#define SDK_VER                    (char*)"V3.2.32"
 
 #define SHARK_ENABLE               0
 
@@ -74,6 +74,7 @@
 #define  D3A3                           "D3A3"
 #define  A200                           "A200"
 #define  A201                           "A201"
+#define  D3AN                           "D3AN"
 
 //#define  T2A1                           "T2A1"
 #define  T3B                            "T3B"
@@ -157,6 +158,7 @@
 #define  SPEED_312_NOR                  312
 #define  SPEED_315_NOR                  315
 #define  SPEED_360_NOR                  360
+#define  SPEED_480_NOR                  480
 #define  SPEED_TOF_NOR                  360
 #define  SPEED_250_RANGE                10
 #define  SPEED_300_RANGE                10
@@ -176,6 +178,8 @@
 #define  SPEED_315_MIN                  (SPEED_315_NOR-SPEED_315_RANGE)
 #define  SPEED_360_MAX                  (SPEED_360_NOR+SPEED_360_RANGE)
 #define  SPEED_360_MIN                  (SPEED_360_NOR-SPEED_360_RANGE)
+#define  SPEED_480_MAX                  (SPEED_480_NOR+SPEED_360_RANGE)
+#define  SPEED_480_MIN                  (SPEED_480_NOR-SPEED_360_RANGE)
 #define  SPEED_TOF_MAX                  (SPEED_TOF_NOR+SPEED_TOF_RANGE)
 #define  SPEED_TOF_MIN                  (SPEED_TOF_NOR-SPEED_TOF_RANGE)
 
